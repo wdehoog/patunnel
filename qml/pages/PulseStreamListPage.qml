@@ -7,7 +7,9 @@ import PaTunnel.Interface 1.0
 
 Page {
     id: page
-    onStatusChanged: { if(status === PageStatus.Active) { pageStack.pushAttached(Qt.resolvedUrl("PulseSinkListPage.qml")) }}
+    onStatusChanged: { if (status == PageStatus.Active) {
+            pageStack.pushAttached(Qt.resolvedUrl("PulseSinkListPage.qml")) }
+    }
 
     SilicaListView {
         id: streamList
@@ -17,37 +19,37 @@ Page {
             title: "Pulseaudio Streams"
         }
 
+        VerticalScrollDecorator {}
+
         PullDownMenu {
             MenuItem {
                 text: "Add tunnel sink"
                 onClicked: pageStack.push(Qt.resolvedUrl("PulseAddTunnelPage.qml"))
             }
+            MenuItem {
+                text: "Set default sink"
+                onClicked: pageStack.navigateForward(PageStackAction.Animated)
+            }
         }
 
-        delegate: BackgroundItem {
-            id: streamItem
+        delegate: ComboBox {
+            id: streamComboBox
             property PulseStream stream
             stream: this_stream
 
-            ComboBox {
-                id: streamComboBox
-                label: name
-                anchors.verticalCenter: parent.verticalCenter
-                currentItem: streamItem.stream.sink
+            label: "#" + stream.index + ": " + stream.name
+            currentItem: stream.sink
 
-                menu: ContextMenu {
-                    Repeater {
-                        model: PulseInterface.sink_list
-                        delegate: MenuItem {
-                            text: description
-                            onClicked: streamItem.stream.move_to_sink(this_sink)
-                        }
+            menu: ContextMenu {
+                Repeater {
+                    model: PulseInterface.sink_list
+                    delegate: MenuItem {
+                        text: "#" + index + ": " + description
+                        onClicked: streamComboBox.stream.move_to_sink(this_sink)
                     }
                 }
             }
         }
-
-        VerticalScrollDecorator {}
     }
 }
 

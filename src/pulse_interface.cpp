@@ -42,6 +42,7 @@
 #include <QDebug>
 #include <QQmlEngine>
 #include <QJSEngine>
+#include <QMutexLocker>
 
 #include "pulse_interface.h"
 #include <sys/types.h>
@@ -50,28 +51,33 @@
 
 QT_BEGIN_NAMESPACE
 
-PulseSink *PulseInterface::find_sink_by_name(char const *name) {
+int PulseInterface::find_sink_by_name(char const *name) {
+    int rv = 0;
     for (QList<PulseSink>::iterator it = m_sinks.begin(); it != m_sinks.end(); ++it) {
         if (it->name() == name)
-            return &(*it);
+            return rv;
+        rv++;
     }
-    return NULL;
+    return -1;
 }
 
-PulseStream *PulseInterface::find_stream_by_idx(u_int32_t idx) {
+int PulseInterface::find_stream_by_idx(unsigned int pa_stream_idx) {
+    int rv = 0;
     for (QList<PulseStream>::iterator it = m_streams.begin(); it != m_streams.end(); ++it) {
-        if (idx == it->index())
-            return &(*it);
+        if (pa_stream_idx == it->index())
+            return rv;
+        rv++;
     }
-    return NULL;
+    return -1;
 }
 
-PulseSink *PulseInterface::find_sink_by_idx(unsigned int idx) {
+int PulseInterface::find_sink_by_idx(unsigned int pa_stream_idx) {
+    int rv = 0;
     for (QList<PulseSink>::iterator it = m_sinks.begin(); it != m_sinks.end(); it++) {
-        if (idx == it->index())
-            return &(*it);
+        if (pa_stream_idx == it->index())
+            return rv;
     }
-    return NULL;
+    return -1;
 }
 
 
@@ -106,10 +112,15 @@ static void cb_server_info(pa_context *context, const pa_server_info *info, void
         qWarning() << QString("Failed to get server information: %s").arg(
                           pa_strerror(pa_context_errno(context)));
     }
-    else {
-        pulseEngine->m_default_sink = pulseEngine->find_sink_by_name(
-                                            info->default_sink_name);
+    else if (!pulseEngine->m_default_sink ||
+             !strcmp(pulseEngine->m_default_sink->name(), info->default_sink_name)) {
+        QMutexLocker(&(pulseEngine->m_sink_list_lock));
+        int idx = pulseEngine->find_sink_by_name(info->default_sink_name);
+        if (idx >= 0)
+            pulseEngine->m_default_sink = &pulseEngine->m_sinks[idx];
+
         emit pulseEngine->default_sink_changed();
+        emit pulseEngine->sink_list_changed();
         qDebug() << "Default sink:" << info->default_sink_name;
     }
     pa_threaded_mainloop_signal(pulseEngine->mainloop(), 0);
@@ -138,14 +149,14 @@ static void cb_sink_info(
 
     Q_ASSERT(sink);
 
-    PulseSink pulse_sink(sink);
-    int idx;
-    if ((idx = pulseEngine->m_sinks.indexOf(pulse_sink)) < 0) {
-        pulseEngine->m_sinks.append(pulse_sink);
+    QMutexLocker(&(pulseEngine->m_sink_list_lock));
+    int idx = pulseEngine->find_sink_by_idx(sink->index);
+    if (idx < 0) {
+        pulseEngine->m_sinks.append(PulseSink(sink));
         pulseEngine->m_sinks_changed = true;
     }
     else {
-        pulseEngine->m_sinks.replace(idx, pulse_sink);
+        pulseEngine->m_sinks.replace(idx, PulseSink(sink));
     }
 }
 
@@ -186,14 +197,14 @@ static void cb_stream_info(pa_context *context, const pa_sink_input_info *stream
     }
 
     Q_ASSERT(stream);
-    PulseStream pulse_stream(stream);
-    int idx;
-    if ((idx = pulseEngine->m_streams.indexOf(pulse_stream)) < 0) {
-        pulseEngine->m_streams.append(pulse_stream);
+
+    int idx = pulseEngine->find_stream_by_idx(stream->index);
+    if (idx < 0) {
+        pulseEngine->m_streams.append(PulseStream(stream));
         pulseEngine->m_streams_changed = true;
     }
     else {
-        pulseEngine->m_streams.replace(idx, pulse_stream);
+        pulseEngine->m_streams.replace(idx, PulseStream(stream));
     }
 }
 
@@ -249,6 +260,7 @@ Q_GLOBAL_STATIC(PulseInterface, the_instance)
 PulseInterface::PulseInterface(QObject *parent)
     : QObject(parent)
     , m_default_sink(NULL)
+    , m_sink_list_lock()
     , m_mainLoopApi(0)
     , m_context(0)
 {
@@ -334,9 +346,9 @@ PulseInterface::PulseInterface(QObject *parent)
 
     if (ok) {
         sinks();
-        server_info();
         streams();
         subscribe();
+        server_info();
     }
 }
 
@@ -356,6 +368,10 @@ PulseInterface::~PulseInterface()
     }
 }
 
+PulseSink *PulseInterface::default_sink() {
+       QMutexLocker l(&m_sink_list_lock);
+       return m_default_sink;
+}
 
 static void cb_subscribe_success(pa_context *c, int success, void *userdata)
 {

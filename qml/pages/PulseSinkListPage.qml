@@ -22,19 +22,22 @@ Page {
             title: "Sinks"
         }
         delegate: BackgroundItem {
-            id: delegate
+            id: sinkItem
+            enabled: index != PulseInterface.default_sink.index
+            onClicked: PulseInterface.default_sink = this_sink
 
             Label {
                 x: Theme.paddingLarge
                 Text {
                     font.pixelSize: Theme.fontSizeSmall
-                    text: description
+                    color: sinkItem.enabled ? (sinkItem.highlighted ? Theme.highlightColor
+                                                                    : Theme.primaryColor)
+                                            : Theme.secondaryColor
+                    text: "#" + index + ": " + description
                 }
-                anchors.verticalCenter: parent.verticalCenter
             }
         }
         VerticalScrollDecorator {}
     }
 }
-
 

@@ -22,6 +22,10 @@ bool PulseSink::operator== (PulseSink const &sink) {
     return m_index == sink.index();
 }
 
+bool PulseSink::operator ==(PulseSink const *sink) {
+    return m_index == sink->index();
+}
+
 PulseSink &PulseSink::operator= (PulseSink const &sink)
 {
     m_description = sink.description();

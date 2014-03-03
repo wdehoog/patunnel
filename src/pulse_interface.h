@@ -46,6 +46,8 @@
 #include <QQmlEngine>
 #include <QJSEngine>
 #include <QQmlListProperty>
+#include <QMutex>
+#include <QMutexLocker>
 
 #include <pulse/pulseaudio.h>
 #include "pulse_sink.h"
@@ -106,7 +108,7 @@ public:
     pa_context *context() { return m_context; }
 
     void set_default_sink(PulseSink *sink);
-    PulseSink *default_sink() { return m_default_sink; }
+    PulseSink *default_sink();
 
     QQmlListProperty<PulseSink> sink_list() {
         return QQmlListProperty<PulseSink>(this, NULL, &PulseInterface::sinks_prop_count, &PulseInterface::sinks_prop_at);
@@ -116,14 +118,16 @@ public:
         return QQmlListProperty<PulseStream>(this, NULL, &PulseInterface::streams_prop_count, &PulseInterface::streams_prop_at);
     }
 
-    PulseSink *find_sink_by_name(char const *name);
-    PulseSink *find_sink_by_idx(unsigned int idx);
+    int find_sink_by_name(char const *name);
+    int find_sink_by_idx(unsigned int pa_stream_idx);
 
-    PulseStream *find_stream_by_idx(u_int32_t idx);
+    int find_stream_by_idx(unsigned int pa_stream_idx);
 
     PulseSink *m_default_sink;
     QList<PulseStream> m_streams;
     QList<PulseSink> m_sinks;
+
+    QMutex m_sink_list_lock;
 
     bool m_sinks_changed;
     bool m_streams_changed;

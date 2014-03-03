@@ -25,7 +25,9 @@ void PulseStream::move_to_sink(QObject *sink) const
 PulseSink *PulseStream::sink() const
 {
     PulseInterface *iface = qobject_cast<PulseInterface *>(PulseInterface::instance());
-    return iface->find_sink_by_idx(sink_index());
+    int idx = iface->find_sink_by_idx(sink_index());
+    if (idx < 0) return NULL;
+    else return &(iface->m_sinks[idx]);
 }
 
 bool PulseStream::operator ==(PulseStream const &stream)

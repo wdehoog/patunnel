@@ -22,6 +22,7 @@ public:
     PulseSink *this_sink() { return this; }
 
     bool operator== (PulseSink const &o);
+    bool operator== (PulseSink const *o);
     PulseSink &operator=(PulseSink const &sink);
 
 private:
