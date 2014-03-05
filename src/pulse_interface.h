@@ -50,6 +50,8 @@
 #include <QMutexLocker>
 
 #include <pulse/pulseaudio.h>
+#include "pulse_object_list.h"
+#include "pulse_object.h"
 #include "pulse_sink.h"
 #include "pulse_stream.h"
 
@@ -73,6 +75,7 @@ private:
     static PulseSink *sinks_prop_at(QQmlListProperty<PulseSink> *list_prop, int index) {
         PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object);
         if (iface) {
+            QMutexLocker l(&(iface->m_data_mutex));
             return new PulseSink(iface->m_sinks.at(index));
         }
         return NULL;
@@ -80,22 +83,28 @@ private:
 
     static PulseStream *streams_prop_at(QQmlListProperty<PulseStream> *list_prop, int index) {
         PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object);
-        if (iface)
+        if (iface) {
+            QMutexLocker l(&(iface->m_data_mutex));
             return new PulseStream(iface->m_streams.at(index));
+        }
         return NULL;
     }
 
     static int sinks_prop_count(QQmlListProperty<PulseSink> *list_prop) {
         PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object);
-        if (iface)
+        if (iface) {
+            QMutexLocker l(&(iface->m_data_mutex));
             return iface->m_sinks.count();
+        }
         return -1;
     }
 
     static int streams_prop_count(QQmlListProperty<PulseStream> *list_prop) {
         PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object);
-        if (iface)
+        if (iface) {
+            QMutexLocker l(&(iface->m_data_mutex));
             return iface->m_streams.count();
+        }
         return -1;
     }
 
@@ -124,10 +133,10 @@ public:
     int find_stream_by_idx(unsigned int pa_stream_idx);
 
     PulseSink *m_default_sink;
-    QList<PulseStream> m_streams;
-    QList<PulseSink> m_sinks;
+    PulseObjectList<PulseStream> m_streams;
+    PulseObjectList<PulseSink> m_sinks;
 
-    QMutex m_sink_list_lock;
+    QMutex m_data_mutex;
 
     bool m_sinks_changed;
     bool m_streams_changed;

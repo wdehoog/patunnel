@@ -4,21 +4,23 @@
 #include <QObject>
 #include <pulse/introspect.h>
 
-class PulseSink : public QObject
+#include "pulse_object.h"
+
+/**
+ * @brief The PulseSink class
+ */
+class PulseSink : public PulseObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString description READ description)
-    Q_PROPERTY(unsigned int index READ index)
+    Q_PROPERTY(QString description READ description NOTIFY description_changed)
     Q_PROPERTY(PulseSink *this_sink READ this_sink)
 
 public:
     explicit PulseSink(pa_sink_info const *info = NULL, QObject *parent = 0);
     PulseSink(PulseSink const &sink);
 
-    QString description() const { return m_description; }
-    char const *name() const { return m_name; }
-    unsigned int index() const { return m_index; }
+    QString description() const;
     PulseSink *this_sink() { return this; }
 
     bool operator== (PulseSink const &o);
@@ -27,13 +29,9 @@ public:
 
 private:
     QString m_description;
-    char *m_name;
-    unsigned int m_index;
 
 signals:
-
-public slots:
-
+    void description_changed();
 };
 
 #endif // PULSE_SINK_H

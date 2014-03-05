@@ -1,111 +1,19 @@
-/****************************************************************************
-**
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
-**
-** This file is part of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:LGPL$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Digia.  For licensing terms and
-** conditions see http://qt.digia.com/licensing.  For further information
-** use the contact form at http://qt.digia.com/contact-us.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Digia gives you certain additional
-** rights.  These rights are described in the Digia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
-
 #include <QDebug>
 #include <QQmlEngine>
 #include <QJSEngine>
 #include <QMutexLocker>
 
-#include "pulse_interface.h"
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
 
+#include "pulse_interface.h"
+
 QT_BEGIN_NAMESPACE
-
-int PulseInterface::find_sink_by_name(char const *name) {
-    int rv = 0;
-    for (QList<PulseSink>::iterator it = m_sinks.begin(); it != m_sinks.end(); ++it) {
-        if (it->name() == name)
-            return rv;
-        rv++;
-    }
-    return -1;
-}
-
-int PulseInterface::find_stream_by_idx(unsigned int pa_stream_idx) {
-    int rv = 0;
-    for (QList<PulseStream>::iterator it = m_streams.begin(); it != m_streams.end(); ++it) {
-        if (pa_stream_idx == it->index())
-            return rv;
-        rv++;
-    }
-    return -1;
-}
-
-int PulseInterface::find_sink_by_idx(unsigned int pa_stream_idx) {
-    int rv = 0;
-    for (QList<PulseSink>::iterator it = m_sinks.begin(); it != m_sinks.end(); it++) {
-        if (pa_stream_idx == it->index())
-            return rv;
-    }
-    return -1;
-}
 
 
 static void cb_server_info(pa_context *context, const pa_server_info *info, void *userdata)
 {
-#ifdef DEBUG_PULSE
-    char ss[PA_SAMPLE_SPEC_SNPRINT_MAX], cm[PA_CHANNEL_MAP_SNPRINT_MAX];
-
-    pa_sample_spec_snprint(ss, sizeof(ss), &info->sample_spec);
-    pa_channel_map_snprint(cm, sizeof(cm), &info->channel_map);
-
-    qDebug() << QString("User name: %1\n"
-             "Host Name: %2\n"
-             "Server Name: %3\n"
-             "Server Version: %4\n"
-             "Default Sample Specification: %5\n"
-             "Default Channel Map: %6\n"
-             "Default Sink: %7\n"
-             "Default Source: %8\n").arg(
-           info->user_name,
-           info->host_name,
-           info->server_name,
-           info->server_version,
-           ss,
-           cm,
-           info->default_sink_name,
-           info->default_source_name);
-#endif
     PulseInterface *pulseEngine = static_cast<PulseInterface*>(userdata);
 
     if (!info) {
@@ -113,9 +21,9 @@ static void cb_server_info(pa_context *context, const pa_server_info *info, void
                           pa_strerror(pa_context_errno(context)));
     }
     else if (!pulseEngine->m_default_sink ||
-             !strcmp(pulseEngine->m_default_sink->name(), info->default_sink_name)) {
-        QMutexLocker(&(pulseEngine->m_sink_list_lock));
-        int idx = pulseEngine->find_sink_by_name(info->default_sink_name);
+             (pulseEngine->m_default_sink->name() != info->default_sink_name)) {
+        QMutexLocker(&(pulseEngine->m_data_mutex));
+        int idx = pulseEngine->m_sinks.find_pulse_name(info->default_sink_name);
         if (idx >= 0)
             pulseEngine->m_default_sink = &pulseEngine->m_sinks[idx];
 
@@ -197,25 +105,37 @@ static void cb_stream_info(pa_context *context, const pa_sink_input_info *stream
     }
 
     Q_ASSERT(stream);
+    QMutexLocker(&(pulseEngine->m_data_mutex));
 
-    int idx = pulseEngine->find_stream_by_idx(stream->index);
+    PulseStream pulse_stream(stream);
+    int idx = pulseEngine->m_streams.indexOf(pulse_stream);
     if (idx < 0) {
-        pulseEngine->m_streams.append(PulseStream(stream));
+        pulseEngine->m_streams.append(pulse_stream);
         pulseEngine->m_streams_changed = true;
     }
     else {
-        pulseEngine->m_streams.replace(idx, PulseStream(stream));
+        pulseEngine->m_streams.replace(idx, pulse_stream);
+    }
+}
+
+
+static void cb_subscribe_success(pa_context *c, int success, void *userdata)
+{
+    Q_UNUSED(c);
+    Q_UNUSED(userdata);
+    if (!success) {
+        qWarning() << "Failed to subscribe. Live list updates impossible.";
     }
 }
 
 
 static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t idx, void *userdata)
 {
-    Q_UNUSED(c);
     PulseInterface *pulse_iface = reinterpret_cast<PulseInterface*>(userdata);
     switch (t & PA_SUBSCRIPTION_EVENT_FACILITY_MASK) {
     case PA_SUBSCRIPTION_EVENT_SINK:
         if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
+            QMutexLocker(&(pulse_iface->m_data_mutex));
             QList<PulseSink>::iterator it = pulse_iface->m_sinks.begin();
             while (it != pulse_iface->m_sinks.end()) {
                 if (it->index() == idx)
@@ -234,6 +154,7 @@ static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t
         break;
     case PA_SUBSCRIPTION_EVENT_SINK_INPUT:
         if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
+            QMutexLocker(&(pulse_iface->m_data_mutex));
             QList<PulseStream>::iterator it = pulse_iface->m_streams.begin();
             while (it != pulse_iface->m_streams.end()) {
                 if (it->index() == idx)
@@ -260,7 +181,7 @@ Q_GLOBAL_STATIC(PulseInterface, the_instance)
 PulseInterface::PulseInterface(QObject *parent)
     : QObject(parent)
     , m_default_sink(NULL)
-    , m_sink_list_lock()
+    , m_data_mutex(QMutex::Recursive)
     , m_mainLoopApi(0)
     , m_context(0)
 {
@@ -369,7 +290,7 @@ PulseInterface::~PulseInterface()
 }
 
 PulseSink *PulseInterface::default_sink() {
-       QMutexLocker l(&m_sink_list_lock);
+       QMutexLocker l(&m_data_mutex);
        return m_default_sink;
 }
 
@@ -410,7 +331,9 @@ static void cb_set_default_sink_success(pa_context *c, int success, void *userda
 
 void PulseInterface::set_default_sink(PulseSink *sink) {
     pa_threaded_mainloop_lock(m_mainLoop);
-    pa_operation *op = pa_context_set_default_sink(m_context, sink->name(), cb_set_default_sink_success, this);
+    QByteArray sink_name(sink->name().toUtf8());
+    pa_operation *op = pa_context_set_default_sink(m_context, sink_name.data(),
+                                                   cb_set_default_sink_success, this);
     while (pa_operation_get_state(op) == PA_OPERATION_RUNNING)
         pa_threaded_mainloop_wait(m_mainLoop);
     pa_operation_unref(op);
