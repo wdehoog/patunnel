@@ -1,7 +1,6 @@
 #include <QDebug>
-#include <QQmlEngine>
-#include <QJSEngine>
 #include <QMutexLocker>
+#include <QCoreApplication>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -24,12 +23,14 @@ static void cb_server_info(pa_context *context, const pa_server_info *info, void
              (pulseEngine->m_default_sink->name() != info->default_sink_name)) {
         QMutexLocker(&(pulseEngine->m_data_mutex));
         int idx = pulseEngine->m_sinks.find_pulse_name(info->default_sink_name);
-        if (idx >= 0)
+        if (idx >= 0) {
             pulseEngine->m_default_sink = &pulseEngine->m_sinks[idx];
+            pulseEngine->m_default_sink->moveToThread(QCoreApplication::instance()->thread());
 
-        emit pulseEngine->default_sink_changed();
-        emit pulseEngine->sink_list_changed();
-        qDebug() << "Default sink:" << info->default_sink_name;
+            emit pulseEngine->default_sink_changed();
+            emit pulseEngine->sink_list_changed();
+            qDebug() << "Default sink:" << info->default_sink_name;
+        }
     }
     pa_threaded_mainloop_signal(pulseEngine->mainloop(), 0);
 }
@@ -59,6 +60,7 @@ static void cb_sink_info(
 
     QMutexLocker(&(pulseEngine->m_data_mutex));
     PulseSink pulse_sink(sink);
+    pulse_sink.moveToThread(QCoreApplication::instance()->thread());
     int idx = pulseEngine->m_sinks.indexOf(pulse_sink);
     if (idx < 0) {
         pulseEngine->m_sinks.append(pulse_sink);
@@ -110,6 +112,7 @@ static void cb_stream_info(pa_context *context, const pa_sink_input_info *stream
     QMutexLocker(&(pulseEngine->m_data_mutex));
 
     PulseStream pulse_stream(stream);
+    pulse_stream.moveToThread(QCoreApplication::instance()->thread());
     int idx = pulseEngine->m_streams.indexOf(pulse_stream);
     if (idx < 0) {
         pulseEngine->m_streams.append(pulse_stream);
@@ -121,18 +124,9 @@ static void cb_stream_info(pa_context *context, const pa_sink_input_info *stream
 }
 
 
-static void cb_subscribe_success(pa_context *c, int success, void *userdata)
-{
-    Q_UNUSED(c);
-    Q_UNUSED(userdata);
-    if (!success) {
-        qWarning() << "Failed to subscribe. Live list updates impossible.";
-    }
-}
-
-
 static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t idx, void *userdata)
 {
+    Q_UNUSED(c);
     PulseInterface *pulse_iface = reinterpret_cast<PulseInterface*>(userdata);
     switch (t & PA_SUBSCRIPTION_EVENT_FACILITY_MASK) {
     case PA_SUBSCRIPTION_EVENT_SINK:
@@ -173,7 +167,9 @@ static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t
         }
         break;
     case PA_SUBSCRIPTION_EVENT_SERVER:
-        pulse_iface->server_info();
+        pa_operation *op = pa_context_get_server_info(pulse_iface->context(), cb_server_info, pulse_iface);
+        if (!op)
+            emit pulse_iface->runtime_error(QString("Error getting server info."));
         break;
     }
 }
@@ -312,7 +308,8 @@ void PulseInterface::subscribe()
     pa_context_set_subscribe_callback(m_context, cb_subscribe, this);
     pa_operation *op = pa_context_subscribe(m_context, (pa_subscription_mask_t) (
                                                 PA_SUBSCRIPTION_MASK_SINK
-                                                | PA_SUBSCRIPTION_MASK_SINK_INPUT),
+                                                | PA_SUBSCRIPTION_MASK_SINK_INPUT
+                                                | PA_SUBSCRIPTION_MASK_SERVER),
                                             cb_subscribe_success, this);
     while (pa_operation_get_state(op) == PA_OPERATION_RUNNING)
         pa_threaded_mainloop_wait(m_mainLoop);
