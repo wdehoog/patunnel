@@ -12,8 +12,9 @@ CONFIG += sailfishapp
 
 SOURCES += src/patunnel.cpp \
     src/pulse_interface.cpp \
-    src/pulse_sink.cpp \
-    src/pulse_stream.cpp
+    src/pulse_object.cpp \
+    src/pulse_stream.cpp \
+    src/pulse_sink.cpp
 
 QMAKE_CXXFLAGS_DEBUG += -O0
 QMAKE_CXXFLAGS_DEBUG += -ggdb
@@ -31,8 +32,10 @@ OTHER_FILES += qml/patunnel.qml \
 
 HEADERS += \
     src/pulse_interface.h \
+    src/pulse_object_list.h \
+    src/pulse_stream.h \
     src/pulse_sink.h \
-    src/pulse_stream.h
+    src/pulse_object.h
 
 
 unix: PKGCONFIG += libpulse
