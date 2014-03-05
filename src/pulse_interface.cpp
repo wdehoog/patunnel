@@ -57,14 +57,15 @@ static void cb_sink_info(
 
     Q_ASSERT(sink);
 
-    QMutexLocker(&(pulseEngine->m_sink_list_lock));
-    int idx = pulseEngine->find_sink_by_idx(sink->index);
+    QMutexLocker(&(pulseEngine->m_data_mutex));
+    PulseSink pulse_sink(sink);
+    int idx = pulseEngine->m_sinks.indexOf(pulse_sink);
     if (idx < 0) {
-        pulseEngine->m_sinks.append(PulseSink(sink));
+        pulseEngine->m_sinks.append(pulse_sink);
         pulseEngine->m_sinks_changed = true;
     }
     else {
-        pulseEngine->m_sinks.replace(idx, PulseSink(sink));
+        pulseEngine->m_sinks.replace(idx, pulse_sink);
     }
 }
 
@@ -91,7 +92,8 @@ static void cb_stream_info(pa_context *context, const pa_sink_input_info *stream
     PulseInterface *pulseEngine = reinterpret_cast<PulseInterface*>(userdata);
 
     if (eol < 0) {
-        qWarning() << QString("Failed to get stream information: %s").arg(pa_strerror(pa_context_errno(context)));
+        qWarning() << QString("Failed to get stream information: %s").arg(
+                          pa_strerror(pa_context_errno(context)));
         return;
     }
 
