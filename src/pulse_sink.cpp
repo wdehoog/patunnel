@@ -7,7 +7,8 @@
  */
 PulseSink::PulseSink(pa_sink_info const * info, QObject *parent) :
     PulseObject(info->name, info->index, parent),
-    m_description(info->description)
+    m_description(info->description),
+    m_module_index(info->owner_module)
 {}
 
 PulseSink::PulseSink(PulseSink const &sink)
@@ -19,6 +20,11 @@ QString PulseSink::description() const {
     QMutexLocker l(m_data_mutex);
     return m_description;
 }
+
+unsigned int PulseSink::module_index() const
+{ QMutexLocker l(m_data_mutex); return m_module_index; }
+
+
 
 bool PulseSink::operator ==(PulseSink const &sink) {
     QMutexLocker l(m_data_mutex);

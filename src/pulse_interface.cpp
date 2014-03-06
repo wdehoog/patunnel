@@ -396,6 +396,23 @@ void PulseInterface::move_stream(PulseStream const &stream, PulseSink const *sin
                         m_context, stream.index(), sink->index(), cb_move_stream_success, this));
 }
 
+
+static void cb_unload_module(pa_context *c, int success, void *userdata) {
+    Q_UNUSED(c);
+    PulseInterface *pulse_iface = reinterpret_cast<PulseInterface*>(userdata);
+    if (!success)
+        emit pulse_iface->runtime_error("Failed to unload module.");
+    pa_threaded_mainloop_signal(pulse_iface->mainloop(), 0);
+}
+
+
+void PulseInterface::unload_sink(const PulseSink *sink)
+{
+    pa_threaded_mainloop_lock(m_mainLoop);
+    _COMPLETE_PA_OP(pa_context_unload_module(m_context, sink->module_index(), cb_unload_module, this));
+}
+
+
 QObject *PulseInterface::instance(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(engine);

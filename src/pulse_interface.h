@@ -141,9 +141,15 @@ public:
     void get_streams();
     void subscribe();
 
-public slots:
-    void add_tunnel_sink(QString host, QString sink);
     void move_stream(PulseStream const &stream, PulseSink const *sink);
+
+    Q_INVOKABLE
+    void add_tunnel_sink(QString host, QString sink);
+
+    Q_INVOKABLE
+    void unload_sink(PulseSink const *sink);
+
+public slots:
 
 signals:
     void runtime_error(QString description);

@@ -22,6 +22,7 @@ public:
 
     QString description() const;
     PulseSink *this_sink() { return this; }
+    unsigned int module_index() const;
 
     bool operator== (PulseSink const &o);
     bool operator== (PulseSink const *o);
@@ -29,6 +30,7 @@ public:
 
 private:
     QString m_description;
+    unsigned int m_module_index;
 
 signals:
     void description_changed();
