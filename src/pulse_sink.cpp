@@ -13,7 +13,8 @@ PulseSink::PulseSink(pa_sink_info const * info, QObject *parent) :
 
 PulseSink::PulseSink(PulseSink const &sink)
     : PulseObject(sink.name(), sink.index()),
-      m_description(sink.description())
+      m_description(sink.description()),
+      m_module_index(sink.module_index())
 {}
 
 QString PulseSink::description() const {
