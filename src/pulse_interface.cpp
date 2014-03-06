@@ -11,11 +11,11 @@
 QT_BEGIN_NAMESPACE
 
 
-#define _COMPLETE_PA_OP(pa_op) \
-    pa_operation *o = pa_op; \
-    while (pa_operation_get_state(o) == PA_OPERATION_RUNNING) \
+#define _COMPLETE_PA_OP(_pa_iface_op_func) \
+    pa_operation *_pa_iface_op = _pa_iface_op_func; \
+    while (pa_operation_get_state(_pa_iface_op) == PA_OPERATION_RUNNING) \
         pa_threaded_mainloop_wait(m_mainLoop); \
-    pa_operation_unref(o); \
+    pa_operation_unref(_pa_iface_op); \
     pa_threaded_mainloop_unlock(m_mainLoop);
 
 
