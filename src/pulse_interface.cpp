@@ -400,8 +400,11 @@ void PulseInterface::move_stream(PulseStream const &stream, PulseSink const *sin
 static void cb_unload_module(pa_context *c, int success, void *userdata) {
     Q_UNUSED(c);
     PulseInterface *pulse_iface = reinterpret_cast<PulseInterface*>(userdata);
-    if (!success)
-        emit pulse_iface->runtime_error("Failed to unload module.");
+    if (!success) {
+        QString err = QString("Failed to unload module: %1").arg(pa_strerror(pa_context_errno(c)));
+        qWarning() << err;
+        emit pulse_iface->runtime_error(err);
+    }
     pa_threaded_mainloop_signal(pulse_iface->mainloop(), 0);
 }
 
