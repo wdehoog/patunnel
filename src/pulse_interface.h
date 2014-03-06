@@ -127,11 +127,6 @@ public:
         return QQmlListProperty<PulseStream>(this, NULL, &PulseInterface::streams_prop_count, &PulseInterface::streams_prop_at);
     }
 
-    int find_sink_by_name(char const *name);
-    int find_sink_by_idx(unsigned int pa_stream_idx);
-
-    int find_stream_by_idx(unsigned int pa_stream_idx);
-
     PulseSink *m_default_sink;
     PulseObjectList<PulseStream> m_streams;
     PulseObjectList<PulseSink> m_sinks;
@@ -141,9 +136,9 @@ public:
     bool m_sinks_changed;
     bool m_streams_changed;
 
-    void server_info();
-    void sinks();
-    void streams();
+    void get_server_info();
+    void get_sinks();
+    void get_streams();
     void subscribe();
 
 public slots:

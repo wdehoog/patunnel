@@ -11,6 +11,14 @@
 QT_BEGIN_NAMESPACE
 
 
+#define _COMPLETE_PA_OP(pa_op) \
+    pa_operation *o = pa_op; \
+    while (pa_operation_get_state(o) == PA_OPERATION_RUNNING) \
+        pa_threaded_mainloop_wait(m_mainLoop); \
+    pa_operation_unref(o); \
+    pa_threaded_mainloop_unlock(m_mainLoop);
+
+
 static void cb_server_info(pa_context *context, const pa_server_info *info, void *userdata)
 {
     PulseInterface *pulseEngine = static_cast<PulseInterface*>(userdata);
@@ -124,7 +132,7 @@ static void cb_stream_info(pa_context *context, const pa_sink_input_info *stream
 }
 
 
-static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t idx, void *userdata)
+static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t pa_idx, void *userdata)
 {
     Q_UNUSED(c);
     PulseInterface *pulse_iface = reinterpret_cast<PulseInterface*>(userdata);
@@ -132,37 +140,33 @@ static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t
     case PA_SUBSCRIPTION_EVENT_SINK:
         if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
             QMutexLocker(&(pulse_iface->m_data_mutex));
-            QList<PulseSink>::iterator it = pulse_iface->m_sinks.begin();
-            while (it != pulse_iface->m_sinks.end()) {
-                if (it->index() == idx)
-                    it = pulse_iface->m_sinks.erase(it);
-                else ++it;
+            int list_idx = pulse_iface->m_sinks.find_pulse_index(pa_idx);
+            if (list_idx >= 0) {
+                pulse_iface->m_sinks.removeAt(list_idx);
+                emit pulse_iface->sink_list_changed();
             }
-            emit pulse_iface->sink_list_changed();
         }
         else {
             pa_operation *operation = pa_context_get_sink_info_by_index(
-                        pulse_iface->context(), idx, cb_sink_info, userdata);
+                        pulse_iface->context(), pa_idx, cb_sink_info, userdata);
             if (!operation)
-                emit pulse_iface->runtime_error(QString("Error getting info for sink #%1").arg(idx));
+                emit pulse_iface->runtime_error(QString("Error getting info for sink #%1").arg(pa_idx));
             pa_operation_unref(operation);
         }
         break;
     case PA_SUBSCRIPTION_EVENT_SINK_INPUT:
         if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
             QMutexLocker(&(pulse_iface->m_data_mutex));
-            QList<PulseStream>::iterator it = pulse_iface->m_streams.begin();
-            while (it != pulse_iface->m_streams.end()) {
-                if (it->index() == idx)
-                    it = pulse_iface->m_streams.erase(it);
-                else ++it;
+            int list_idx = pulse_iface->m_streams.find_pulse_index(pa_idx);
+            if (list_idx >= 0) {
+                pulse_iface->m_streams.removeAt(list_idx);
+                emit pulse_iface->stream_list_changed();
             }
-            emit pulse_iface->stream_list_changed();
         }
         else {
-            pa_operation *operation = pa_context_get_sink_input_info(pulse_iface->context(), idx, cb_stream_info, userdata);
+            pa_operation *operation = pa_context_get_sink_input_info(pulse_iface->context(), pa_idx, cb_stream_info, userdata);
             if (!operation)
-                emit pulse_iface->runtime_error(QString("Error getting info for stream #%1").arg(idx));
+                emit pulse_iface->runtime_error(QString("Error getting info for stream #%1").arg(pa_idx));
             pa_operation_unref(operation);
         }
         break;
@@ -264,12 +268,13 @@ PulseInterface::PulseInterface(QObject *parent)
     pa_threaded_mainloop_unlock(m_mainLoop);
 
     if (ok) {
-        sinks();
-        streams();
+        get_sinks();
+        get_streams();
         subscribe();
-        server_info();
+        get_server_info();
     }
 }
+
 
 PulseInterface::~PulseInterface()
 {
@@ -287,10 +292,12 @@ PulseInterface::~PulseInterface()
     }
 }
 
+
 PulseSink *PulseInterface::default_sink() {
        QMutexLocker l(&m_data_mutex);
        return m_default_sink;
 }
+
 
 static void cb_subscribe_success(pa_context *c, int success, void *userdata)
 {
@@ -302,19 +309,16 @@ static void cb_subscribe_success(pa_context *c, int success, void *userdata)
     pa_threaded_mainloop_signal(pulse_iface->mainloop(), 0);
 }
 
+
 void PulseInterface::subscribe()
 {
     pa_threaded_mainloop_lock(m_mainLoop);
     pa_context_set_subscribe_callback(m_context, cb_subscribe, this);
-    pa_operation *op = pa_context_subscribe(m_context, (pa_subscription_mask_t) (
-                                                PA_SUBSCRIPTION_MASK_SINK
-                                                | PA_SUBSCRIPTION_MASK_SINK_INPUT
-                                                | PA_SUBSCRIPTION_MASK_SERVER),
-                                            cb_subscribe_success, this);
-    while (pa_operation_get_state(op) == PA_OPERATION_RUNNING)
-        pa_threaded_mainloop_wait(m_mainLoop);
-    pa_operation_unref(op);
-    pa_threaded_mainloop_unlock(m_mainLoop);
+    _COMPLETE_PA_OP(pa_context_subscribe(m_context, (pa_subscription_mask_t) (
+                                             PA_SUBSCRIPTION_MASK_SINK
+                                             | PA_SUBSCRIPTION_MASK_SINK_INPUT
+                                             | PA_SUBSCRIPTION_MASK_SERVER),
+                                         cb_subscribe_success, this))
 }
 
 
@@ -328,47 +332,33 @@ static void cb_set_default_sink_success(pa_context *c, int success, void *userda
     pa_threaded_mainloop_signal(pulse_iface->mainloop(), 0);
 }
 
+
 void PulseInterface::set_default_sink(PulseSink *sink) {
-    pa_threaded_mainloop_lock(m_mainLoop);
     QByteArray sink_name(sink->name().toUtf8());
-    pa_operation *op = pa_context_set_default_sink(m_context, sink_name.data(),
-                                                   cb_set_default_sink_success, this);
-    while (pa_operation_get_state(op) == PA_OPERATION_RUNNING)
-        pa_threaded_mainloop_wait(m_mainLoop);
-    pa_operation_unref(op);
-    pa_threaded_mainloop_unlock(m_mainLoop);
+    pa_threaded_mainloop_lock(m_mainLoop);
+    _COMPLETE_PA_OP(pa_context_set_default_sink(m_context, sink_name.data(),
+                                                cb_set_default_sink_success, this));
 }
 
 
-void PulseInterface::server_info()
+void PulseInterface::get_server_info()
 {
     pa_threaded_mainloop_lock(m_mainLoop);
-    pa_operation *operation = pa_context_get_server_info(m_context, cb_server_info, this);
-    while (pa_operation_get_state(operation) == PA_OPERATION_RUNNING)
-        pa_threaded_mainloop_wait(m_mainLoop);
-    pa_operation_unref(operation);
-    pa_threaded_mainloop_unlock(m_mainLoop);
+    _COMPLETE_PA_OP(pa_context_get_server_info(m_context, cb_server_info, this));
 }
 
-void PulseInterface::sinks()
+void PulseInterface::get_sinks()
 {
     pa_threaded_mainloop_lock(m_mainLoop);
-    pa_operation *operation = pa_context_get_sink_info_list(m_context, cb_sink_info, this);
-    while (pa_operation_get_state(operation) == PA_OPERATION_RUNNING)
-        pa_threaded_mainloop_wait(m_mainLoop);
-    pa_operation_unref(operation);
-    pa_threaded_mainloop_unlock(m_mainLoop);
+    _COMPLETE_PA_OP(pa_context_get_sink_info_list(m_context, cb_sink_info, this));
 }
 
-void PulseInterface::streams()
+void PulseInterface::get_streams()
 {
     pa_threaded_mainloop_lock(m_mainLoop);
-    pa_operation *op = pa_context_get_sink_input_info_list(m_context, cb_stream_info, this);
-    while (pa_operation_get_state(op) == PA_OPERATION_RUNNING)
-        pa_threaded_mainloop_wait(m_mainLoop);
-    pa_operation_unref(op);
-    pa_threaded_mainloop_unlock(m_mainLoop);
+    _COMPLETE_PA_OP(pa_context_get_sink_input_info_list(m_context, cb_stream_info, this));
 }
+
 
 static void cb_load_module(pa_context *c, uint32_t idx, void *userdata) {
     Q_UNUSED(c);
@@ -378,18 +368,16 @@ static void cb_load_module(pa_context *c, uint32_t idx, void *userdata) {
     pa_threaded_mainloop_signal(pulse_iface->mainloop(), 0);
 }
 
+
 void PulseInterface::add_tunnel_sink(QString host, QString sink)
 {
     QString tunnel_opt = QString("server=%1 sink=%2").arg(host, sink);
     QByteArray tunnel_opt_bytes = tunnel_opt.toUtf8();
 
     pa_threaded_mainloop_lock(m_mainLoop);
-    pa_operation *op = pa_context_load_module(m_context, "module-tunnel-sink", tunnel_opt_bytes.data(), cb_load_module, this);
-    while (pa_operation_get_state(op) == PA_OPERATION_RUNNING)
-        pa_threaded_mainloop_wait(m_mainLoop);
-    pa_operation_unref(op);
-    pa_threaded_mainloop_unlock(m_mainLoop);
+    _COMPLETE_PA_OP(pa_context_load_module(m_context, "module-tunnel-sink", tunnel_opt_bytes.data(), cb_load_module, this));
 }
+
 
 static void cb_move_stream_success(pa_context *c, int success, void *userdata)
 {
@@ -400,14 +388,12 @@ static void cb_move_stream_success(pa_context *c, int success, void *userdata)
     pa_threaded_mainloop_signal(pulse_iface->mainloop(), 0);
 }
 
+
 void PulseInterface::move_stream(PulseStream const &stream, PulseSink const *sink)
 {
     pa_threaded_mainloop_lock(m_mainLoop);
-    pa_operation *op = pa_context_move_sink_input_by_index(m_context, stream.index(), sink->index(), cb_move_stream_success, this);
-    while (pa_operation_get_state(op) == PA_OPERATION_RUNNING)
-        pa_threaded_mainloop_wait(m_mainLoop);
-    pa_operation_unref(op);
-    pa_threaded_mainloop_unlock(m_mainLoop);
+    _COMPLETE_PA_OP(pa_context_move_sink_input_by_index(
+                        m_context, stream.index(), sink->index(), cb_move_stream_success, this));
 }
 
 QObject *PulseInterface::instance(QQmlEngine *engine, QJSEngine *scriptEngine)
