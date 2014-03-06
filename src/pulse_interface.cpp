@@ -409,8 +409,9 @@ static void cb_unload_module(pa_context *c, int success, void *userdata) {
 }
 
 
-void PulseInterface::unload_sink(const PulseSink *sink)
+void PulseInterface::unload_sink(QObject *o)
 {
+    PulseSink const *sink = qobject_cast<PulseSink const *>(o);
     pa_threaded_mainloop_lock(m_mainLoop);
     _COMPLETE_PA_OP(pa_context_unload_module(m_context, sink->module_index(), cb_unload_module, this));
 }

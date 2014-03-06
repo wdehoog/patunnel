@@ -147,7 +147,7 @@ public:
     void add_tunnel_sink(QString host, QString sink);
 
     Q_INVOKABLE
-    void unload_sink(PulseSink const *sink);
+    void unload_sink(QObject *sink);
 
 public slots:
 
