@@ -36,12 +36,8 @@ Page {
 
         delegate: ComboBox {
             x: Theme.paddingLarge
-            width: parent.width - 2*Theme.paddingLarge
             id: streamComboBox
-            property PulseStream stream
-            stream: this_stream
-            label: "#" + stream.index + ": " + stream.name
-            currentItem: stream.sink
+            label: "#" + index + ": " + name
 
             menu: ContextMenu {
                 Repeater {
@@ -50,10 +46,12 @@ Page {
                     delegate: MenuItem {
                         id: sinkItem
                         text: "#" + index + ": " + name
-                        onClicked: streamComboBox.stream.move_to_sink(this_sink)
+                        onClicked: this_stream.move_to_sink(this_sink)
                     }
                 }
             }
+            
+            currentIndex: sink_list_idx
         }
     }
 }
