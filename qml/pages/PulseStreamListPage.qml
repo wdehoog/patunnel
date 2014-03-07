@@ -49,7 +49,6 @@ Page {
 
                     delegate: MenuItem {
                         id: sinkItem
-                        font.pixelSize: Theme.fontSizeExtraSmall
                         text: "#" + index + ": " + name
                         onClicked: streamComboBox.stream.move_to_sink(this_sink)
                     }
