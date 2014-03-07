@@ -30,10 +30,17 @@ void PulseStream::move_to_sink(QObject *sink) const
 PulseSink *PulseStream::sink() const
 {
     PulseInterface *iface = qobject_cast<PulseInterface *>(PulseInterface::instance());
-    QMutexLocker l(m_data_mutex);
-    int idx = iface->m_sinks.find_pulse_index(sink_index());
+    int idx = sink_list_idx();
     if (idx < 0) return NULL;
     else return &(iface->m_sinks[idx]);
+}
+
+int PulseStream::sink_list_idx() const
+{
+    QMutexLocker l(m_data_mutex);
+    PulseInterface *iface = qobject_cast<PulseInterface *>(PulseInterface::instance());
+    int idx = iface->m_sinks.find_pulse_index(sink_index());
+    return idx;
 }
 
 bool PulseStream::operator ==(PulseStream const &stream)
@@ -49,8 +56,8 @@ PulseStream &PulseStream::operator =(PulseStream const &s) {
     QMutexLocker l(m_data_mutex);
     if (m_sink_index != s.sink_index()) {
         m_sink_index = s.sink_index();
+        emit sink_list_idx_changed();
         emit sink_changed();
     }
     return *this;
 }
-

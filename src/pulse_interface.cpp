@@ -178,7 +178,14 @@ static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t
     }
 }
 
-Q_GLOBAL_STATIC(PulseInterface, the_instance)
+PulseInterface *PulseInterface::m_instance;
+
+PulseInterface *PulseInterface::instance()
+{
+    if (!m_instance) m_instance = new PulseInterface();
+    return m_instance;
+}
+
 
 PulseInterface::PulseInterface(QObject *parent)
     : QObject(parent)
@@ -269,14 +276,13 @@ PulseInterface::PulseInterface(QObject *parent)
 
     if (ok) {
         get_sinks();
-        get_streams();
         subscribe();
+        get_streams();
         get_server_info();
     }
 }
 
-
-PulseInterface::~PulseInterface()
+void PulseInterface::deleteLater()
 {
     if (m_context) {
         pa_threaded_mainloop_lock(m_mainLoop);
@@ -416,12 +422,5 @@ void PulseInterface::unload_sink(QObject *o)
     _COMPLETE_PA_OP(pa_context_unload_module(m_context, sink->module_index(), cb_unload_module, this));
 }
 
-
-QObject *PulseInterface::instance(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine);
-    Q_UNUSED(scriptEngine);
-    return the_instance();
-}
 
 QT_END_NAMESPACE

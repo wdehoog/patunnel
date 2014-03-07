@@ -14,7 +14,7 @@ class PulseSink : public PulseObject
     Q_OBJECT
 
     Q_PROPERTY(QString description READ description NOTIFY description_changed)
-    Q_PROPERTY(PulseSink *this_sink READ this_sink)
+    Q_PROPERTY(PulseSink *this_sink READ this_sink NOTIFY this_changed)
 
 public:
     explicit PulseSink(pa_sink_info const *info = NULL, QObject *parent = 0);
@@ -33,6 +33,7 @@ private:
     unsigned int m_module_index;
 
 signals:
+    void this_changed();
     void description_changed();
 };
 

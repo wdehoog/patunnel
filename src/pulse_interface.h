@@ -109,10 +109,8 @@ private:
     }
 
 public:
-    PulseInterface(QObject *parent = 0);
-    ~PulseInterface();
+    //~PulseInterface();
 
-    static QObject *instance(QQmlEngine *engine = NULL, QJSEngine *scriptEngine = NULL);
     pa_threaded_mainloop *mainloop() { return m_mainLoop; }
     pa_context *context() { return m_context; }
 
@@ -149,7 +147,10 @@ public:
     Q_INVOKABLE
     void unload_sink(QObject *sink);
 
+    static PulseInterface *instance();
+
 public slots:
+    void deleteLater();
 
 signals:
     void runtime_error(QString description);
@@ -158,12 +159,15 @@ signals:
     void stream_list_changed();
 
 private:
+    PulseInterface(QObject *parent = 0);
 
     pa_mainloop_api *m_mainLoopApi;
     pa_threaded_mainloop *m_mainLoop;
     pa_context *m_context;
+    static PulseInterface *m_instance;
 
 };
+
 
 QT_END_NAMESPACE
 

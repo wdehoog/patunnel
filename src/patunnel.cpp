@@ -42,6 +42,15 @@
 
 #include "pulse_interface.h"
 
+
+static QObject *get_PulseInterface_instance(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine);
+    Q_UNUSED(scriptEngine);
+    return PulseInterface::instance();
+}
+
+
 int main(int argc, char *argv[])
 {
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
@@ -49,7 +58,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<PulseSink>("PaTunnel.Sink", 1, 0, "PulseSink");
     qmlRegisterType<PulseStream>("PaTunnel.Stream", 1, 0, "PulseStream");
-    qmlRegisterSingletonType<PulseInterface>("PaTunnel.Interface", 1, 0, "PulseInterface", &PulseInterface::instance);
+    qmlRegisterSingletonType<PulseInterface>("PaTunnel.Interface", 1, 0, "PulseInterface", &get_PulseInterface_instance);
 
     view->setSource(SailfishApp::pathTo("qml/patunnel.qml"));
 
