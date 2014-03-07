@@ -28,7 +28,8 @@ OTHER_FILES += qml/patunnel.qml \
     patunnel.desktop \
     qml/pages/PulseSinkListPage.qml \
     qml/pages/PulseStreamListPage.qml \
-    qml/pages/PulseAddTunnelPage.qml
+    qml/pages/PulseAddTunnelPage.qml \
+    qml/pages/SinkLabel.qml
 
 HEADERS += \
     src/pulse_interface.h \
