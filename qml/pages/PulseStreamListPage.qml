@@ -14,9 +14,11 @@ Page {
     SilicaListView {
         id: streamList
         model: PulseInterface.stream_list
+
         anchors.fill: parent
+
         header: PageHeader {
-            title: "Pulseaudio Streams"
+            title: "PulseAudio Streams"
         }
 
         VerticalScrollDecorator {}
@@ -33,18 +35,22 @@ Page {
         }
 
         delegate: ComboBox {
+            x: Theme.paddingLarge
+            width: parent.width - 2*Theme.paddingLarge
             id: streamComboBox
             property PulseStream stream
             stream: this_stream
-
             label: "#" + stream.index + ": " + stream.name
             currentItem: stream.sink
 
             menu: ContextMenu {
                 Repeater {
                     model: PulseInterface.sink_list
+
                     delegate: MenuItem {
-                        text: "#" + index + ": " + description
+                        id: sinkItem
+                        font.pixelSize: Theme.fontSizeExtraSmall
+                        text: "#" + index + ": " + name
                         onClicked: streamComboBox.stream.move_to_sink(this_sink)
                     }
                 }
@@ -52,5 +58,3 @@ Page {
         }
     }
 }
-
-

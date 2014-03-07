@@ -5,9 +5,13 @@ import PaTunnel.Interface 1.0
 
 
 Page {
-    id: page
-
     SilicaListView {
+        model: PulseInterface.sink_list
+        anchors.fill: parent
+        header: PageHeader {
+            title: "PulseAudio Sinks"
+        }
+
         PullDownMenu {
             MenuItem {
                 text: "Add tunnel sink"
@@ -15,25 +19,26 @@ Page {
             }
         }
 
-        id: sinkList
-        model: PulseInterface.sink_list
-        anchors.fill: parent
-        header: PageHeader {
-            title: "Sinks"
-        }
-        delegate: BackgroundItem {
+        delegate: ListItem {
             id: sinkItem
+            ListView.onRemove: animateRemoval(listItem)
             enabled: index != PulseInterface.default_sink.index
-            onClicked: PulseInterface.default_sink = this_sink
 
-            Label {
-                x: Theme.paddingLarge
-                Text {
-                    font.pixelSize: Theme.fontSizeSmall
-                    color: sinkItem.enabled ? (sinkItem.highlighted ? Theme.highlightColor
-                                                                    : Theme.primaryColor)
-                                            : Theme.secondaryColor
-                    text: "#" + index + ": " + description
+            SinkLabel {
+                theSink: this_sink
+                enabled: sinkItem.enabled
+                highlighted: sinkItem.highlighted
+            }
+
+            menu: ContextMenu {
+                MenuItem {
+                    text: "Set as default sink"
+                    enabled: this_sink.index != PulseInterface.default_sink.index
+                    onClicked: PulseInterface.default_sink = this_sink
+                }
+                MenuItem {
+                    text: "Unload module"
+                    onClicked: PulseInterface.unload_sink(this_sink)
                 }
             }
         }
