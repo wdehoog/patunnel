@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="86"
+   height="86"
+   id="svg2161"
+   sodipodi:version="0.32"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="patunnel.png"
+   version="1.1">
+  <title
+     id="title3949">PulseTunnel icon</title>
+  <defs
+     id="defs2163">
+    <linearGradient
+       id="linearGradient3093">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3095" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3097" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient2503">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop2505" />
+      <stop
+         style="stop-color:#141413;stop-opacity:1;"
+         offset="1"
+         id="stop2507" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient2495">
+      <stop
+         style="stop-color:#282927;stop-opacity:1;"
+         offset="0"
+         id="stop2497" />
+      <stop
+         style="stop-color:#0a0a09;stop-opacity:1;"
+         offset="1"
+         id="stop2499" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient2535">
+      <stop
+         id="stop2537"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:0.36078432;" />
+      <stop
+         id="stop2539"
+         offset="1"
+         style="stop-color:#ffffff;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3072">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop3074" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop3076" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2495"
+       id="linearGradient3926"
+       gradientUnits="userSpaceOnUse"
+       x1="0.30000001"
+       y1="43"
+       x2="85.699997"
+       y2="43" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2535"
+       id="linearGradient3928"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.1762067,0,0,2.1762067,-452.91054,290.50463)"
+       x1="532"
+       y1="131.40625"
+       x2="667.5"
+       y2="357.40625" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="7"
+     inkscape:cx="44.233285"
+     inkscape:cy="34.543501"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1060"
+     inkscape:window-x="-4"
+     inkscape:window-y="0"
+     inkscape:snap-global="true"
+     inkscape:snap-bbox="true"
+     inkscape:window-maximized="1"
+     inkscape:snap-grids="false"
+     inkscape:bbox-nodes="true"
+     inkscape:object-nodes="false"
+     inkscape:snap-smooth-nodes="false"
+     inkscape:object-paths="false"
+     inkscape:snap-page="true"
+     units="px">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3829"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata2166">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://www.gnu.org/copyleft/gpl.html" />
+        <dc:title>PulseTunnel icon</dc:title>
+        <dc:date>2014-03-07</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Victor Mataré</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:contributor>
+          <cc:Agent>
+            <dc:title>Pierre Ossman &lt;ossman@cendio.se&gt; for Cendio AB
+Rafael Jannone (basic idea)</dc:title>
+          </cc:Agent>
+        </dc:contributor>
+        <dc:description>The vanilla PulseAudio icon transformed to match the Jolla template</dc:description>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     transform="translate(0,38.000034)">
+    <g
+       id="g1494"
+       transform="matrix(0.04768401,0,0,0.04768401,-14.618881,-20.142443)" />
+    <g
+       id="g3912"
+       transform="matrix(2.8666668,0,0,2.8666668,-28.666662,-46.52082)"
+       inkscape:export-xdpi="90.026047"
+       inkscape:export-ydpi="90.026047">
+      <g
+         inkscape:export-ydpi="258.07468"
+         inkscape:export-xdpi="258.07468"
+         inkscape:export-filename="/home/ich/devel/patunnel/patunnel.png"
+         style="stroke:#000000;stroke-opacity:1"
+         transform="matrix(0.34722221,0,0,0.34722221,59.119295,3.041824)"
+         id="g3040">
+        <g
+           style="stroke:#000000;stroke-opacity:1;display:none"
+           id="Layer_2"
+           display="none" />
+        <g
+           transform="translate(-141.26358,-2.6857106e-7)"
+           style="stroke:#000000;stroke-opacity:1"
+           id="Layer_1">
+          <linearGradient
+             xlink:href="#linearGradient2495"
+             id="SVGID_1_"
+             gradientUnits="userSpaceOnUse"
+             x1="0.71689999"
+             y1="85.283096"
+             x2="85.283096"
+             y2="0.71689999">
+            <stop
+               offset="0"
+               style="stop-color:#EB424A"
+               id="stop3018" />
+            <stop
+               offset="1"
+               style="stop-color:#FF7500"
+               id="stop3020" />
+          </linearGradient>
+          <path
+             style="fill:url(#linearGradient3926);fill-opacity:1;stroke:#000000;stroke-opacity:1"
+             inkscape:connector-curvature="0"
+             d="M 84.277,0.3 H 43 C 19.417,0.3 0.3,19.418 0.3,43 v 41.277 c 0,0.786 0.637,1.423 1.423,1.423 H 43 C 66.583,85.7 85.7,66.582 85.7,43 V 1.723 C 85.7,0.937 85.063,0.3 84.277,0.3 z"
+             id="path3022" />
+        </g>
+      </g>
+      <path
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cscccscc"
+         id="path2375"
+         d="m 1138.7485,717.00547 c -83.6233,89.64267 -176.99052,92.46833 -303.64068,92.46833 -124.68073,0 -233.16479,61.63146 -311.61406,137.24726 l -0.9127,147.34214 c -1.58883,11.8699 13.00994,11.9507 13.00994,11.9507 0,0 196.84842,0.19 295.272,0.5296 306.9868,1.0593 307.2683,-7.7405 307.7505,-306.14915 z"
+         style="fill:url(#linearGradient3928);fill-opacity:1;fill-rule:evenodd;stroke:none"
+         inkscape:export-filename="/home/ich/devel/patunnel/patunnel.png"
+         inkscape:export-xdpi="258.07468"
+         inkscape:export-ydpi="258.07468"
+         transform="matrix(0.04768401,0,0,0.04768401,-14.618881,-20.142443)" />
+      <g
+         inkscape:export-ydpi="258.07468"
+         inkscape:export-xdpi="258.07468"
+         inkscape:export-filename="/home/ich/devel/patunnel/patunnel.png"
+         id="g2415"
+         transform="matrix(0.10653673,0,0,0.11019443,-48.190823,-88.619727)">
+        <path
+           transform="matrix(1.676363,0,0,1.676363,688.6772,-480.168)"
+           d="m 22,863.61249 c 0,12.70255 -10.297451,23 -23,23 -12.702549,0 -23,-10.29745 -23,-23 0,-12.70255 10.297451,-23 23,-23 12.702549,0 23,10.29745 23,23 z"
+           sodipodi:ry="23"
+           sodipodi:rx="23"
+           sodipodi:cy="863.61249"
+           sodipodi:cx="-1"
+           id="path2417"
+           style="fill:#729fcf;fill-opacity:1;stroke:none"
+           sodipodi:type="arc" />
+        <path
+           inkscape:connector-curvature="0"
+           id="path2419"
+           d="m 666.92273,892.01313 c -33.41788,8.8724 -58.06252,39.3337 -58.0625,75.53129 0,36.19748 24.64463,66.69008 58.0625,75.56248 -24.10776,-10.8192 -41.4375,-40.5874 -41.4375,-75.56248 -10e-6,-34.97499 17.32973,-64.71209 41.4375,-75.53129 z m 40.15625,0 c 24.10777,10.8192 41.4375,40.5562 41.4375,75.53129 0,34.97508 -17.32974,64.74328 -41.4375,75.56248 33.41788,-8.8724 58.06252,-39.365 58.0625,-75.56248 0,-36.19749 -24.64461,-66.65889 -58.0625,-75.53129 z"
+           style="fill:#729fcf;fill-opacity:1;stroke:none" />
+        <path
+           inkscape:connector-curvature="0"
+           style="fill:#729fcf;fill-opacity:1;stroke:none"
+           d="m 655.64705,849.58672 c -52.18504,13.85506 -90.66987,61.42313 -90.66984,117.9489 0,56.52568 38.48482,104.14268 90.66984,117.99768 -37.64645,-16.8952 -64.7084,-63.3809 -64.7084,-117.99768 -2e-5,-54.61657 27.06194,-101.05374 64.7084,-117.9489 z m 62.70761,0 c 37.64646,16.89516 64.7084,63.33217 64.7084,117.9489 0,54.61678 -27.06195,101.10248 -64.7084,117.99768 52.18504,-13.855 90.66987,-61.472 90.66984,-117.99768 0,-56.52561 -38.48478,-104.09384 -90.66984,-117.9489 z"
+           id="path2421" />
+      </g>
+    </g>
+  </g>
+</svg>
