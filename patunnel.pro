@@ -6,30 +6,31 @@
 #         - desktop icon filename must be changed
 #         - desktop filename must be changed
 #         - icon definition filename in desktop file must be changed
-TARGET = patunnel
+TARGET = harbour-patunnel
 
 CONFIG += sailfishapp
 
-SOURCES += src/patunnel.cpp \
+SOURCES += \
     src/pulse_interface.cpp \
     src/pulse_object.cpp \
     src/pulse_stream.cpp \
-    src/pulse_sink.cpp
+    src/pulse_sink.cpp \
+    src/harbour-patunnel.cpp
 
 QMAKE_CXXFLAGS_DEBUG += -O0
 QMAKE_CXXFLAGS_DEBUG += -ggdb
 
 DEFINES += DEBUG_PULSE
 
-OTHER_FILES += qml/patunnel.qml \
+OTHER_FILES += \
     qml/cover/CoverPage.qml \
-    rpm/patunnel.spec \
-    rpm/patunnel.yaml \
-    patunnel.desktop \
     qml/pages/PulseSinkListPage.qml \
     qml/pages/PulseStreamListPage.qml \
     qml/pages/PulseAddTunnelPage.qml \
-    qml/pages/SinkLabel.qml
+    harbour-patunnel.desktop \
+    qml/harbour-patunnel.qml \
+    rpm/harbour-patunnel.spec \
+    rpm/harbour-patunnel.yaml
 
 HEADERS += \
     src/pulse_interface.h \
@@ -37,6 +38,5 @@ HEADERS += \
     src/pulse_stream.h \
     src/pulse_sink.h \
     src/pulse_object.h
-
 
 unix: PKGCONFIG += libpulse

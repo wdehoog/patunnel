@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import PaTunnel.Interface 1.0
+import harbour.patunnel.Interface 1.0
 
 Dialog {
     canAccept: { ipField.text.length > 0

@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import PaTunnel.Sink 1.0
-import PaTunnel.Interface 1.0
+import harbour.patunnel.Sink 1.0
+import harbour.patunnel.Interface 1.0
 
 
 Page {
@@ -24,10 +24,21 @@ Page {
             ListView.onRemove: animateRemoval(listItem)
             enabled: index != PulseInterface.default_sink.index
 
-            SinkLabel {
-                theSink: this_sink
-                enabled: sinkItem.enabled
-                highlighted: sinkItem.highlighted
+            Column {
+                Label {
+                    id: descrLabel
+                    x: Theme.paddingLarge
+                    text: description
+                    color: sinkItem.enabled ? (sinkItem.highlighted ? Theme.highlightColor
+                                                                    : Theme.primaryColor)
+                                            : Theme.secondaryColor
+                }
+                Label {
+                    text: "#" + index + ": " + name
+                    color: descrLabel.color
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    x: Theme.paddingLarge
+                }
             }
 
             menu: ContextMenu {

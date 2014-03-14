@@ -56,11 +56,11 @@ int main(int argc, char *argv[])
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
 
-    qmlRegisterType<PulseSink>("PaTunnel.Sink", 1, 0, "PulseSink");
-    qmlRegisterType<PulseStream>("PaTunnel.Stream", 1, 0, "PulseStream");
-    qmlRegisterSingletonType<PulseInterface>("PaTunnel.Interface", 1, 0, "PulseInterface", &get_PulseInterface_instance);
+    qmlRegisterType<PulseSink>("harbour.patunnel.Sink", 1, 0, "PulseSink");
+    qmlRegisterType<PulseStream>("harbour.patunnel.Stream", 1, 0, "PulseStream");
+    qmlRegisterSingletonType<PulseInterface>("harbour.patunnel.Interface", 1, 0, "PulseInterface", &get_PulseInterface_instance);
 
-    view->setSource(SailfishApp::pathTo("qml/patunnel.qml"));
+    view->setSource(SailfishApp::pathTo("qml/harbour-patunnel.qml"));
 
     view->show();
     return app->exec();

@@ -1,8 +1,8 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import PaTunnel.Stream 1.0
-import PaTunnel.Sink 1.0
-import PaTunnel.Interface 1.0
+import harbour.patunnel.Stream 1.0
+import harbour.patunnel.Sink 1.0
+import harbour.patunnel.Interface 1.0
 
 
 Page {

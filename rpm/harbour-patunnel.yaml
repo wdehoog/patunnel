@@ -1,0 +1,41 @@
+Name: harbour-patunnel
+Summary: Send audio streams to another Pulseaudio server
+Version: 0.1
+Release: 1
+Group: Qt/Qt
+URL: https://github.com/vmatare/patunnel
+License: LICENSE
+Sources:
+- '%{name}-%{version}.tar.bz2'
+Description: |-
+  This app allows you to load a PulseAudio tunnel sink that connects to another PulseAudio server, e.g. via WiFi. You can then route audio streams to that server, to play them back on your home stereo, for example.
+Configure: none
+Builder: qtc5
+PkgConfigBR:
+- Qt5Quick
+- Qt5Qml
+- Qt5Core
+- sailfishapp >= 0.0.10
+Requires:
+- libpulse-simple.so.0(PULSE_0)
+- sailfishsilica-qt5 >= 0.10.9
+Files:
+- '%{_datadir}/applications/%{name}.desktop'
+- '%{_datadir}/applications'
+- '%{_datadir}/icons/hicolor/86x86/apps/%{name}.png'
+- '%{_datadir}/icons/hicolor/86x86/apps'
+- '%{_datadir}/%{name}/qml/harbour-patunnel.qml'
+- '%{_datadir}/%{name}/qml/pages/PulseAddTunnelPage.qml'
+- '%{_datadir}/%{name}/qml/pages/PulseSinkListPage.qml'
+- '%{_datadir}/%{name}/qml/pages/PulseStreamListPage.qml'
+- '%{_datadir}/%{name}/qml/cover/CoverPage.qml'
+- '%{_datadir}/%{name}/qml'
+- '%{_datadir}/%{name}'
+- '%attr(755,root,root) %{_bindir}/%{name}'
+- '%{_bindir}'
+- '%defattr(644,root,root,755)'
+- /usr/bin
+- /usr/share/harbour-patunnel
+- /usr/share/applications
+- /usr/share/icons/hicolor/86x86/apps
+PkgBR: []
