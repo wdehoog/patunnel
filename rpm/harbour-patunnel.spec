@@ -64,6 +64,10 @@ desktop-file-install --delete-original       \
 
 %files
 %defattr(-,root,root,-)
+/usr/share/icons/hicolor/86x86/apps
+/usr/share/applications
+/usr/share/harbour-patunnel
+/usr/bin
 %defattr(644,root,root,755)
 %{_bindir}
 %attr(755,root,root) %{_bindir}/%{name}
