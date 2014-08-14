@@ -109,8 +109,6 @@ private:
     }
 
 public:
-    //~PulseInterface();
-
     pa_threaded_mainloop *mainloop() { return m_mainLoop; }
     pa_context *context() { return m_context; }
 
@@ -142,7 +140,7 @@ public:
     void move_stream(PulseStream const &stream, PulseSink const *sink);
 
     Q_INVOKABLE
-    void add_tunnel_sink(QString host, QString sink);
+    void load_module(QString name, QString args);
 
     Q_INVOKABLE
     void unload_sink(QObject *sink);

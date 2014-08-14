@@ -375,13 +375,13 @@ static void cb_load_module(pa_context *c, uint32_t idx, void *userdata) {
 }
 
 
-void PulseInterface::add_tunnel_sink(QString host, QString sink)
+void PulseInterface::load_module(QString name, QString args)
 {
-    QString tunnel_opt = QString("server=%1 sink=%2").arg(host, sink);
-    QByteArray tunnel_opt_bytes = tunnel_opt.toUtf8();
+   QByteArray args_bytes = args.toUtf8();
+   QByteArray name_bytes = name.toUtf8();
 
-    pa_threaded_mainloop_lock(m_mainLoop);
-    _COMPLETE_PA_OP(pa_context_load_module(m_context, "module-tunnel-sink", tunnel_opt_bytes.data(), cb_load_module, this));
+   pa_threaded_mainloop_lock(m_mainLoop);
+   _COMPLETE_PA_OP(pa_context_load_module(m_context, name_bytes.data(), args_bytes.data(), cb_load_module, this));
 }
 
 

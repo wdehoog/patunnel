@@ -5,7 +5,8 @@ import harbour.patunnel.Interface 1.0
 Dialog {
     canAccept: { ipField.text.length > 0
                  && sinkField.text.length > 0 }
-    onAccepted: PulseInterface.add_tunnel_sink(ipField.text, sinkField.text)
+    onAccepted: PulseInterface.load_module("module-tunnel-sink",
+                    "server=" + ipField.text + " sink=" + sinkField.text)
 
     Column {
         anchors.fill: parent
