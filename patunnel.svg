@@ -15,8 +15,11 @@
    id="svg2161"
    sodipodi:version="0.32"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="patunnel.png"
-   version="1.1">
+   sodipodi:docname="patunnel.svg"
+   version="1.1"
+   inkscape:export-filename="/home/ich/devel/patunnel/harbour-patunnel.png"
+   inkscape:export-xdpi="90.029999"
+   inkscape:export-ydpi="90.029999">
   <title
      id="title3949">PulseTunnel icon</title>
   <defs
@@ -104,9 +107,9 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="7"
-     inkscape:cx="44.233285"
-     inkscape:cy="34.543501"
-     inkscape:current-layer="layer1"
+     inkscape:cx="-13.918916"
+     inkscape:cy="52.927906"
+     inkscape:current-layer="Layer_1"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
@@ -117,7 +120,7 @@
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
      inkscape:window-maximized="1"
-     inkscape:snap-grids="false"
+     inkscape:snap-grids="true"
      inkscape:bbox-nodes="true"
      inkscape:object-nodes="false"
      inkscape:snap-smooth-nodes="false"
@@ -210,7 +213,7 @@ Rafael Jannone (basic idea)</dc:title>
                id="stop3020" />
           </linearGradient>
           <path
-             style="fill:url(#linearGradient3926);fill-opacity:1;stroke:#000000;stroke-opacity:1"
+             style="fill:url(#linearGradient3926);fill-opacity:1;stroke:#729fcf;stroke-opacity:0.66798419"
              inkscape:connector-curvature="0"
              d="M 84.277,0.3 H 43 C 19.417,0.3 0.3,19.418 0.3,43 v 41.277 c 0,0.786 0.637,1.423 1.423,1.423 H 43 C 66.583,85.7 85.7,66.582 85.7,43 V 1.723 C 85.7,0.937 85.063,0.3 84.277,0.3 z"
              id="path3022" />
@@ -231,7 +234,7 @@ Rafael Jannone (basic idea)</dc:title>
          inkscape:export-xdpi="258.07468"
          inkscape:export-filename="/home/ich/devel/patunnel/patunnel.png"
          id="g2415"
-         transform="matrix(0.10653673,0,0,0.11019443,-48.190823,-88.619727)">
+         transform="matrix(0.09862747,0,0,0.10201363,-42.582738,-80.906361)">
         <path
            transform="matrix(1.676363,0,0,1.676363,688.6772,-480.168)"
            d="m 22,863.61249 c 0,12.70255 -10.297451,23 -23,23 -12.702549,0 -23,-10.29745 -23,-23 0,-12.70255 10.297451,-23 23,-23 12.702549,0 23,10.29745 23,23 z"
