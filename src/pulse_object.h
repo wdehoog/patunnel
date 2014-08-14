@@ -27,6 +27,7 @@ protected:
     QMutex *m_data_mutex;
     QString m_name;
     unsigned int m_index;
+    virtual void this_changed() = 0;
 
 signals:
     void name_changed();

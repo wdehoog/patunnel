@@ -33,6 +33,7 @@ void PulseObject::set_name(QString name) {
         QMutexLocker l(m_data_mutex);
         m_name = name;
         emit name_changed();
+        this_changed();
     }
 }
 
@@ -41,5 +42,6 @@ void PulseObject::set_index(unsigned int index) {
         QMutexLocker l(m_data_mutex);
         m_index = index;
         emit index_changed();
+        this_changed();
     }
 }

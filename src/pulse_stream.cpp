@@ -58,6 +58,11 @@ PulseStream &PulseStream::operator =(PulseStream const &s) {
         m_sink_index = s.sink_index();
         emit sink_list_idx_changed();
         emit sink_changed();
+        emit this_stream_changed();
     }
     return *this;
+}
+
+void PulseStream::this_changed() {
+    emit this_stream_changed();
 }

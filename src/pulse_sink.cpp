@@ -49,3 +49,7 @@ PulseSink &PulseSink::operator= (PulseSink const &sink)
     }
     return *this;
 }
+
+void PulseSink::this_changed() {
+    emit this_sink_changed();
+}

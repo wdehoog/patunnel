@@ -15,7 +15,7 @@ class PulseStream : public PulseObject
 
     Q_PROPERTY(PulseSink *sink READ sink NOTIFY sink_changed)
     Q_PROPERTY(int sink_list_idx READ sink_list_idx NOTIFY sink_list_idx_changed)
-    Q_PROPERTY(PulseStream *this_stream READ this_stream NOTIFY this_changed)
+    Q_PROPERTY(PulseStream *this_stream READ this_stream NOTIFY this_stream_changed)
 
 public:
     explicit PulseStream(pa_sink_input_info const *stream_info = NULL, QObject *parent = 0);
@@ -35,9 +35,10 @@ public:
 
 private:
     unsigned int m_sink_index;
+    void this_changed();
 
 signals:
-    void this_changed();
+    void this_stream_changed();
 
     void sink_changed();
     void sink_list_idx_changed();
