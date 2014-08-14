@@ -15,7 +15,8 @@ SOURCES += \
     src/pulse_object.cpp \
     src/pulse_stream.cpp \
     src/pulse_sink.cpp \
-    src/harbour-patunnel.cpp
+    src/harbour-patunnel.cpp \
+    src/pulse_module.cpp
 
 QMAKE_CXXFLAGS_DEBUG += -O0
 QMAKE_CXXFLAGS_DEBUG += -ggdb
@@ -30,13 +31,15 @@ OTHER_FILES += \
     harbour-patunnel.desktop \
     qml/harbour-patunnel.qml \
     rpm/harbour-patunnel.spec \
-    rpm/harbour-patunnel.yaml
+    rpm/harbour-patunnel.yaml \
+    qml/pages/PulseAddTcpPage.qml
 
 HEADERS += \
     src/pulse_interface.h \
     src/pulse_object_list.h \
     src/pulse_stream.h \
     src/pulse_sink.h \
-    src/pulse_object.h
+    src/pulse_object.h \
+    src/pulse_module.h
 
 unix: PKGCONFIG += libpulse
