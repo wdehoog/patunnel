@@ -32,6 +32,13 @@ Page {
                 text: "Set default sink"
                 onClicked: pageStack.navigateForward(PageStackAction.Animated)
             }
+
+            // UI feedback sounds from opening the pulley menu would change the stream list,
+            // which would update the list view and slam the pulley menu shut while the user
+            // is interacting with it. Therefore, stream list updates are deferred until the
+            // menu is closed again.
+            // cf. https://github.com/vmatare/patunnel/issues/1
+            onActiveChanged: PulseInterface.defer_stream_list_updates(active)
         }
 
         delegate: ComboBox {

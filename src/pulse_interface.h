@@ -132,6 +132,8 @@ public:
     bool m_sinks_changed;
     bool m_streams_changed;
 
+    bool m_stream_updates_deferred;
+
     void get_server_info();
     void get_sinks();
     void get_streams();
@@ -144,6 +146,9 @@ public:
 
     Q_INVOKABLE
     void unload_sink(QObject *sink);
+
+    Q_INVOKABLE
+    bool defer_stream_list_updates(bool b);
 
     static PulseInterface *instance();
 

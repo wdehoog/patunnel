@@ -102,14 +102,14 @@ static void cb_stream_info(pa_context *context, const pa_sink_input_info *stream
     PulseInterface *pulseEngine = reinterpret_cast<PulseInterface*>(userdata);
 
     if (eol < 0) {
-        qWarning() << QString("Failed to get stream information: %s").arg(
+        qWarning() << QString("Failed to get stream information: %1").arg(
                           pa_strerror(pa_context_errno(context)));
         return;
     }
 
     if (eol) {
         pa_threaded_mainloop_signal(pulseEngine->mainloop(), 0);
-        if (pulseEngine->m_streams_changed) {
+        if (!pulseEngine->m_stream_updates_deferred && pulseEngine->m_streams_changed) {
             emit pulseEngine->stream_list_changed();
             pulseEngine->m_streams_changed = false;
         }
@@ -119,7 +119,7 @@ static void cb_stream_info(pa_context *context, const pa_sink_input_info *stream
     Q_ASSERT(stream);
     QMutexLocker(&(pulseEngine->m_data_mutex));
 
-    PulseStream pulse_stream(stream);
+    PulseStream pulse_stream((stream));
     pulse_stream.moveToThread(QCoreApplication::instance()->thread());
     int idx = pulseEngine->m_streams.indexOf(pulse_stream);
     if (idx < 0) {
@@ -160,7 +160,8 @@ static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t
             int list_idx = pulse_iface->m_streams.find_pulse_index(pa_idx);
             if (list_idx >= 0) {
                 pulse_iface->m_streams.removeAt(list_idx);
-                emit pulse_iface->stream_list_changed();
+                if (!pulse_iface->m_stream_updates_deferred)
+                    emit pulse_iface->stream_list_changed();
             }
         }
         else {
@@ -187,10 +188,23 @@ PulseInterface *PulseInterface::instance()
 }
 
 
+bool PulseInterface::defer_stream_list_updates(bool is_deferred)
+{
+    bool was_deferred = m_stream_updates_deferred;
+    m_stream_updates_deferred = is_deferred;
+    if (m_streams_changed && was_deferred && !is_deferred) {
+        emit stream_list_changed();
+        m_streams_changed = false;
+    }
+    return was_deferred;
+}
+
+
 PulseInterface::PulseInterface(QObject *parent)
     : QObject(parent)
     , m_default_sink(NULL)
     , m_data_mutex(QMutex::Recursive)
+    , m_stream_updates_deferred(false)
     , m_mainLoopApi(0)
     , m_context(0)
 {
