@@ -5,10 +5,10 @@
  * @param info PulseAudio's pa_sink_info struct that describes a sink.
  * @param parent Not used.
  */
-PulseSink::PulseSink(pa_sink_info const * info, QObject *parent) :
-    PulseObject(info->name, info->index, parent),
-    m_description(info->description),
-    m_module_index(info->owner_module)
+PulseSink::PulseSink(pa_sink_info const * info, QObject *parent)
+    : PulseObject(info->name, info->index, parent),
+      m_description(info->description),
+      m_module_index(info->owner_module)
 {}
 
 PulseSink::PulseSink(PulseSink const &sink)
@@ -29,12 +29,14 @@ unsigned int PulseSink::module_index() const
 
 bool PulseSink::operator ==(PulseSink const &sink) {
     QMutexLocker l(m_data_mutex);
-    return m_index == sink.index();
+    return m_index == sink.index()
+            && m_description == sink.description()
+            && m_name == sink.name()
+            && m_module_index == sink.module_index();
 }
 
 bool PulseSink::operator ==(PulseSink const *sink) {
-    QMutexLocker l(m_data_mutex);
-    return m_index == sink->index();
+    return *this == *sink;
 }
 
 PulseSink &PulseSink::operator= (PulseSink const &sink)

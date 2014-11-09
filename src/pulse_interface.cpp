@@ -24,7 +24,7 @@ static void cb_server_info(pa_context *context, const pa_server_info *info, void
     PulseInterface *pulseEngine = static_cast<PulseInterface*>(userdata);
 
     if (!info) {
-        qWarning() << QString("Failed to get server information: %s").arg(
+        qWarning() << QString("Failed to get server information: %1").arg(
                           pa_strerror(pa_context_errno(context)));
     }
     else if (!pulseEngine->m_default_sink ||
@@ -50,7 +50,7 @@ static void cb_sink_info(
     PulseInterface *pulseEngine = static_cast<PulseInterface*>(userdata);
 
     if (isLast < 0) {
-        qWarning() << QString("Failed to get sink information: %s").arg(
+        qWarning() << QString("Failed to get sink information: %1").arg(
                           pa_strerror(pa_context_errno(context)));
         return;
     }
@@ -67,7 +67,7 @@ static void cb_sink_info(
     Q_ASSERT(sink);
 
     QMutexLocker(&(pulseEngine->m_data_mutex));
-    PulseSink pulse_sink(sink);
+    PulseSink pulse_sink((sink));
     pulse_sink.moveToThread(QCoreApplication::instance()->thread());
     int idx = pulseEngine->m_sinks.indexOf(pulse_sink);
     if (idx < 0) {
@@ -132,6 +132,41 @@ static void cb_stream_info(pa_context *context, const pa_sink_input_info *stream
 }
 
 
+static void cb_module_info(pa_context *context, const pa_module_info *module, int eol, void *userdata)
+{
+    PulseInterface *pulseEngine = reinterpret_cast<PulseInterface*>(userdata);
+
+    if (eol < 0) {
+        qWarning() << QString("Failed to get stream information: %1").arg(
+                          pa_strerror(pa_context_errno(context)));
+        return;
+    }
+
+    if (eol) {
+        pa_threaded_mainloop_signal(pulseEngine->mainloop(), 0);
+        if (pulseEngine->m_modules_changed) {
+            emit pulseEngine->module_list_changed();
+            pulseEngine->m_modules_changed = false;
+        }
+        return;
+    }
+
+    Q_ASSERT(module);
+    QMutexLocker(&(pulseEngine->m_data_mutex));
+
+    PulseModule pulse_module((module));
+    pulse_module.moveToThread(QCoreApplication::instance()->thread());
+    int idx = pulseEngine->m_modules.indexOf(pulse_module);
+    if (idx < 0) {
+        pulseEngine->m_modules.append(pulse_module);
+        pulseEngine->m_modules_changed = true;
+    }
+    else {
+        pulseEngine->m_modules.replace(idx, pulse_module);
+    }
+}
+
+
 static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t pa_idx, void *userdata)
 {
     Q_UNUSED(c);
@@ -171,6 +206,21 @@ static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t
             pa_operation_unref(operation);
         }
         break;
+    case PA_SUBSCRIPTION_EVENT_MODULE:
+        if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
+            QMutexLocker(&(pulse_iface->m_data_mutex));
+            int list_idx = pulse_iface->m_modules.find_pulse_index(pa_idx);
+            if (list_idx >= 0) {
+                pulse_iface->m_modules.removeAt(list_idx);
+                emit pulse_iface->module_list_changed();
+            }
+        }
+        else {
+            pa_operation *operation = pa_context_get_module_info(pulse_iface->context(), pa_idx, cb_module_info, userdata);
+            if (!operation)
+                emit pulse_iface->runtime_error(QString("Error getting info for module #%1").arg(pa_idx));
+            pa_operation_unref(operation);
+        }
     case PA_SUBSCRIPTION_EVENT_SERVER:
         pa_operation *op = pa_context_get_server_info(pulse_iface->context(), cb_server_info, pulse_iface);
         if (!op)
@@ -293,6 +343,7 @@ PulseInterface::PulseInterface(QObject *parent)
         subscribe();
         get_streams();
         get_server_info();
+        get_modules();
     }
 }
 
@@ -337,7 +388,8 @@ void PulseInterface::subscribe()
     _COMPLETE_PA_OP(pa_context_subscribe(m_context, (pa_subscription_mask_t) (
                                              PA_SUBSCRIPTION_MASK_SINK
                                              | PA_SUBSCRIPTION_MASK_SINK_INPUT
-                                             | PA_SUBSCRIPTION_MASK_SERVER),
+                                             | PA_SUBSCRIPTION_MASK_SERVER
+                                             | PA_SUBSCRIPTION_MASK_MODULE),
                                          cb_subscribe_success, this))
 }
 
@@ -377,6 +429,12 @@ void PulseInterface::get_streams()
 {
     pa_threaded_mainloop_lock(m_mainLoop);
     _COMPLETE_PA_OP(pa_context_get_sink_input_info_list(m_context, cb_stream_info, this));
+}
+
+void PulseInterface::get_modules()
+{
+    pa_threaded_mainloop_lock(m_mainLoop);
+    _COMPLETE_PA_OP(pa_context_get_module_info_list(m_context, cb_module_info, this));
 }
 
 
@@ -426,6 +484,13 @@ static void cb_unload_module(pa_context *c, int success, void *userdata) {
         emit pulse_iface->runtime_error(err);
     }
     pa_threaded_mainloop_signal(pulse_iface->mainloop(), 0);
+}
+
+
+void PulseInterface::unload_module(PulseModule *module)
+{
+    pa_threaded_mainloop_lock(m_mainLoop);
+    _COMPLETE_PA_OP(pa_context_unload_module(m_context, module->index(), cb_unload_module, this));
 }
 
 

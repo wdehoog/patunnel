@@ -54,8 +54,30 @@
 #include "pulse_object.h"
 #include "pulse_sink.h"
 #include "pulse_stream.h"
+#include "pulse_module.h"
 
 QT_BEGIN_NAMESPACE
+
+#define QQML_LIST_PROPERTY_AT(name, type, backing_member) \
+    static type *name(QQmlListProperty<type> *list_prop, int index) { \
+        PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object); \
+        if (iface) { \
+            QMutexLocker l(&(iface->m_data_mutex)); \
+            return new type(iface->backing_member.at(index)); \
+        } \
+        return NULL; \
+    }
+
+#define QQML_LIST_PROPERTY_COUNT(name, type, backing_member) \
+    static int name(QQmlListProperty<type> *list_prop) { \
+        PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object); \
+        if (iface) { \
+            QMutexLocker l(&(iface->m_data_mutex)); \
+            return iface->backing_member.count(); \
+        } \
+        return -1; \
+    }
+
 
 class PulseInterface : public QObject
 {
@@ -70,8 +92,95 @@ class PulseInterface : public QObject
     Q_PROPERTY(QQmlListProperty<PulseStream> stream_list
                READ stream_list
                NOTIFY stream_list_changed)
+    Q_PROPERTY(QQmlListProperty<PulseModule> module_list
+               READ module_list
+               NOTIFY module_list_changed)
+
+public:
+    pa_threaded_mainloop *mainloop() { return m_mainLoop; }
+    pa_context *context() { return m_context; }
+
+    void set_default_sink(PulseSink *sink);
+    PulseSink *default_sink();
+
+    QQmlListProperty<PulseSink> sink_list() {
+        return QQmlListProperty<PulseSink>(
+                    this,
+                    NULL,
+                    &PulseInterface::sinks_prop_count,
+                    &PulseInterface::sinks_prop_at);
+    }
+
+    QQmlListProperty<PulseStream> stream_list() {
+        return QQmlListProperty<PulseStream>(
+                    this,
+                    NULL,
+                    &PulseInterface::streams_prop_count,
+                    &PulseInterface::streams_prop_at);
+    }
+
+    QQmlListProperty<PulseModule> module_list() {
+        return QQmlListProperty<PulseModule>(
+                    this,
+                    NULL,
+                    &PulseInterface::modules_prop_count,
+                    &PulseInterface::modules_prop_at);
+    }
+
+    PulseSink *m_default_sink;
+    PulseObjectList<PulseStream> m_streams;
+    PulseObjectList<PulseSink> m_sinks;
+    PulseObjectList<PulseModule> m_modules;
+
+    QMutex m_data_mutex;
+
+    bool m_sinks_changed;
+    bool m_streams_changed;
+    bool m_modules_changed;
+
+    bool m_stream_updates_deferred;
+
+    void get_server_info();
+    void get_sinks();
+    void get_streams();
+    void get_modules();
+    void subscribe();
+
+    void move_stream(PulseStream const &stream, PulseSink const *sink);
+
+    Q_INVOKABLE
+    void load_module(QString name, QString args);
+
+    Q_INVOKABLE
+    void unload_module(PulseModule *module);
+
+    Q_INVOKABLE
+    void unload_sink(QObject *sink);
+
+    Q_INVOKABLE
+    bool defer_stream_list_updates(bool b);
+
+    static PulseInterface *instance();
+
+public slots:
+    void deleteLater();
+
+signals:
+    void runtime_error(QString description);
+    void default_sink_changed();
+    void sink_list_changed();
+    void stream_list_changed();
+    void module_list_changed();
 
 private:
+    PulseInterface(QObject *parent = 0);
+
+    pa_mainloop_api *m_mainLoopApi;
+    pa_threaded_mainloop *m_mainLoop;
+    pa_context *m_context;
+
+    static PulseInterface *m_instance;
+
     static PulseSink *sinks_prop_at(QQmlListProperty<PulseSink> *list_prop, int index) {
         PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object);
         if (iface) {
@@ -89,6 +198,8 @@ private:
         }
         return NULL;
     }
+
+    QQML_LIST_PROPERTY_AT(modules_prop_at, PulseModule, m_modules)
 
     static int sinks_prop_count(QQmlListProperty<PulseSink> *list_prop) {
         PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object);
@@ -108,66 +219,8 @@ private:
         return -1;
     }
 
-public:
-    pa_threaded_mainloop *mainloop() { return m_mainLoop; }
-    pa_context *context() { return m_context; }
+    QQML_LIST_PROPERTY_COUNT(modules_prop_count, PulseModule, m_modules)
 
-    void set_default_sink(PulseSink *sink);
-    PulseSink *default_sink();
-
-    QQmlListProperty<PulseSink> sink_list() {
-        return QQmlListProperty<PulseSink>(this, NULL, &PulseInterface::sinks_prop_count, &PulseInterface::sinks_prop_at);
-    }
-
-    QQmlListProperty<PulseStream> stream_list() {
-        return QQmlListProperty<PulseStream>(this, NULL, &PulseInterface::streams_prop_count, &PulseInterface::streams_prop_at);
-    }
-
-    PulseSink *m_default_sink;
-    PulseObjectList<PulseStream> m_streams;
-    PulseObjectList<PulseSink> m_sinks;
-
-    QMutex m_data_mutex;
-
-    bool m_sinks_changed;
-    bool m_streams_changed;
-
-    bool m_stream_updates_deferred;
-
-    void get_server_info();
-    void get_sinks();
-    void get_streams();
-    void subscribe();
-
-    void move_stream(PulseStream const &stream, PulseSink const *sink);
-
-    Q_INVOKABLE
-    void load_module(QString name, QString args);
-
-    Q_INVOKABLE
-    void unload_sink(QObject *sink);
-
-    Q_INVOKABLE
-    bool defer_stream_list_updates(bool b);
-
-    static PulseInterface *instance();
-
-public slots:
-    void deleteLater();
-
-signals:
-    void runtime_error(QString description);
-    void default_sink_changed();
-    void sink_list_changed();
-    void stream_list_changed();
-
-private:
-    PulseInterface(QObject *parent = 0);
-
-    pa_mainloop_api *m_mainLoopApi;
-    pa_threaded_mainloop *m_mainLoop;
-    pa_context *m_context;
-    static PulseInterface *m_instance;
 
 };
 

@@ -7,9 +7,6 @@ import harbour.patunnel.Interface 1.0
 
 Page {
     id: page
-    onStatusChanged: { if (status == PageStatus.Active) {
-            pageStack.pushAttached(Qt.resolvedUrl("PulseSinkListPage.qml")) }
-    }
 
     SilicaListView {
         id: streamList
@@ -25,12 +22,12 @@ Page {
 
         PullDownMenu {
             MenuItem {
-                text: "Add tunnel sink"
-                onClicked: pageStack.push(Qt.resolvedUrl("PulseAddTunnelPage.qml"))
+                text: "Sinks"
+                onClicked: pageStack.push(Qt.resolvedUrl("PulseSinkListPage.qml"))
             }
             MenuItem {
-                text: "Set default sink"
-                onClicked: pageStack.navigateForward(PageStackAction.Animated)
+                text: "Modules"
+                onClicked: pageStack.push(Qt.resolvedUrl("PulseModuleListPage.qml"))
             }
 
             // UI feedback sounds from opening the pulley menu would change the stream list,

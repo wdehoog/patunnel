@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<PulseSink>("harbour.patunnel.Sink", 1, 0, "PulseSink");
     qmlRegisterType<PulseStream>("harbour.patunnel.Stream", 1, 0, "PulseStream");
+    qmlRegisterType<PulseModule>("harbour.patunnel.Module", 1, 0, "PulseModule");
     qmlRegisterSingletonType<PulseInterface>("harbour.patunnel.Interface", 1, 0, "PulseInterface", &get_PulseInterface_instance);
 
     view->setSource(SailfishApp::pathTo("qml/harbour-patunnel.qml"));
