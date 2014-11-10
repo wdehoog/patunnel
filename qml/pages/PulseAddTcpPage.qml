@@ -3,36 +3,31 @@ import Sailfish.Silica 1.0
 import harbour.patunnel.Interface 1.0
 
 Dialog {
-    canAccept: { ipField.text.length > 0
-                 && sinkField.text.length > 0 }
-    onAccepted: PulseInterface.add_tunnel_sink(ipField.text, sinkField.text)
+    onAccepted: PulseInterface.load_module("module-native-protocol-tcp",
+                                           acl_field.text != "" ? "auth-ip-acl=" + acl_field.text : ""
+                                           + opts_field.text)
 
-    Column {
-        anchors.fill: parent
+    DialogHeader {
+        id: header
+        acceptText: "Share server"
+    }
 
-        DialogHeader {
-            acceptText: "Share local sound server"
-        }
-        TextField {
-            width: parent.width
-            id: ipField
-            anchors { left: parent.left; right: parent.right }
-            label: "Hostname or IP"
-            placeholderText: label
-            focus: true
-            EnterKey.onClicked: {
-                ipField.focus = false;
-                sinkField.focus = true;
-            }
-        }
 
-        TextField {
-            width: parent.width
-            id: sinkField
-            anchors { left: parent.left; right: parent.right }
-            label: "Sink name or index"
-            placeholderText: label
-            validator: RegExpValidator { regExp: /^.+/ }
-        }
+    TextField {
+        width: parent.width
+        id: acl_field
+        anchors { top: header.bottom; left: parent.left; right: parent.right }
+        label: "IPs/networks separated by semicolon"
+        placeholderText: "Access list"
+        validator: RegExpValidator { regExp: /^((\d{1,3}\.){3}\d{1,3}(\/\d{1,2})?(;(\d{1,3}\.){3}\d{1,3}(\/\d{1,2})?)*)?$/ }
+    }
+
+    TextField {
+        width: parent.width
+        id: opts_field
+        anchors { top: acl_field.bottom; left: parent.left; right: parent.right }
+        label: "name=value ..."
+        placeholderText: "Other options"
+        validator: RegExpValidator { regExp: /^(\w+(=\S+)?(\s+\w+(=\S+)?)*)?$/ }
     }
 }

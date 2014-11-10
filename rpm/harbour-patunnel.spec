@@ -64,23 +64,18 @@ desktop-file-install --delete-original       \
 
 %files
 %defattr(-,root,root,-)
-/usr/share/icons/hicolor/86x86/apps
-/usr/share/applications
-/usr/share/harbour-patunnel
-/usr/bin
 %defattr(644,root,root,755)
-%{_bindir}
 %attr(755,root,root) %{_bindir}/%{name}
-%{_datadir}/%{name}
-%{_datadir}/%{name}/qml
 %{_datadir}/%{name}/qml/cover/CoverPage.qml
 %{_datadir}/%{name}/qml/pages/PulseStreamListPage.qml
 %{_datadir}/%{name}/qml/pages/PulseSinkListPage.qml
 %{_datadir}/%{name}/qml/pages/PulseAddTunnelPage.qml
+%{_datadir}/%{name}/qml/pages/PulseAddTcpPage.qml
+%{_datadir}/%{name}/qml/pages/PulseLoadModulePage.qml
+%{_datadir}/%{name}/qml/pages/PulseModuleListPage.qml
+%{_datadir}/%{name}/qml/pages/PulseModulePage.qml
 %{_datadir}/%{name}/qml/harbour-patunnel.qml
-%{_datadir}/icons/hicolor/86x86/apps
 %{_datadir}/icons/hicolor/86x86/apps/%{name}.png
-%{_datadir}/applications
 %{_datadir}/applications/%{name}.desktop
 # >> files
 # << files
