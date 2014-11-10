@@ -69,7 +69,7 @@ static void cb_sink_info(
     QMutexLocker(&(pulseEngine->m_data_mutex));
     PulseSink pulse_sink((sink));
     pulse_sink.moveToThread(QCoreApplication::instance()->thread());
-    int idx = pulseEngine->m_sinks.indexOf(pulse_sink);
+    int idx = pulseEngine->m_sinks.find_pulse_index(pulse_sink.index());
     if (idx < 0) {
         pulseEngine->m_sinks.append(pulse_sink);
         pulseEngine->m_sinks_changed = true;
@@ -121,7 +121,7 @@ static void cb_stream_info(pa_context *context, const pa_sink_input_info *stream
 
     PulseStream pulse_stream((stream));
     pulse_stream.moveToThread(QCoreApplication::instance()->thread());
-    int idx = pulseEngine->m_streams.indexOf(pulse_stream);
+    int idx = pulseEngine->m_streams.find_pulse_index(pulse_stream.index());
     if (idx < 0) {
         pulseEngine->m_streams.append(pulse_stream);
         pulseEngine->m_streams_changed = true;
@@ -156,7 +156,7 @@ static void cb_module_info(pa_context *context, const pa_module_info *module, in
 
     PulseModule pulse_module((module));
     pulse_module.moveToThread(QCoreApplication::instance()->thread());
-    int idx = pulseEngine->m_modules.indexOf(pulse_module);
+    int idx = pulseEngine->m_modules.find_pulse_index(pulse_module.index());
     if (idx < 0) {
         pulseEngine->m_modules.append(pulse_module);
         pulseEngine->m_modules_changed = true;
