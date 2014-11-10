@@ -33,7 +33,9 @@ OTHER_FILES += \
     rpm/harbour-patunnel.spec \
     rpm/harbour-patunnel.yaml \
     qml/pages/PulseAddTcpPage.qml \
-    qml/pages/PulseModuleListPage.qml
+    qml/pages/PulseModuleListPage.qml \
+    qml/pages/PulseModulePage.qml \
+    qml/pages/PulseLoadModulePage.qml
 
 HEADERS += \
     src/pulse_interface.h \
