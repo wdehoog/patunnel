@@ -20,6 +20,13 @@ Page {
 
         VerticalScrollDecorator {}
 
+        ViewPlaceholder {
+            enabled: streamList.count == 0
+            text: "No streams"
+            hintText: "No application is currently playing audio."
+        }
+
+
         PullDownMenu {
             MenuItem {
                 text: "Sinks"
@@ -50,7 +57,9 @@ Page {
                     delegate: MenuItem {
                         id: sinkItem
                         text: "#" + index + ": " + name
-                        onClicked: this_stream.move_to_sink(this_sink)
+                        onClicked: move_to_sink(this_sink)
+                        x: Theme.paddingLarge
+                        truncationMode: TruncationMode.Fade
                     }
                 }
             }

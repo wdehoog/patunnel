@@ -25,6 +25,7 @@ Dialog {
                 ipField.focus = false;
                 sinkField.focus = true;
             }
+            validator: RegExpValidator { regExp: /^\w+$/ }
         }
 
         TextField {
