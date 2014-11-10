@@ -44,7 +44,7 @@ Page {
             menu: ContextMenu {
                 MenuItem {
                     text: "Set as default sink"
-                    enabled: this_sink.index != PulseInterface.default_sink.index
+                    enabled: index != PulseInterface.default_sink.index
                     onClicked: PulseInterface.default_sink = this_sink
                 }
                 MenuItem {
