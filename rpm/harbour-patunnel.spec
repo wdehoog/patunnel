@@ -13,9 +13,9 @@ Name:       harbour-patunnel
 %{!?qtc_qmake5:%define qtc_qmake5 %qmake5}
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
-Summary:    Send audio streams to another Pulseaudio server
-Version:    0.1
-Release:    1
+Summary:    Manage your local PulseAudio server
+Version:    0.2
+Release:    0
 Group:      Qt/Qt
 License:    LICENSE
 URL:        https://github.com/vmatare/patunnel
