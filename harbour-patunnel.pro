@@ -16,7 +16,8 @@ SOURCES += \
     src/pulse_stream.cpp \
     src/pulse_sink.cpp \
     src/harbour-patunnel.cpp \
-    src/pulse_module.cpp
+    src/pulse_module.cpp \
+    src/settings.cpp
 
 QMAKE_CXXFLAGS_DEBUG += -O0
 QMAKE_CXXFLAGS_DEBUG += -ggdb
@@ -43,6 +44,7 @@ HEADERS += \
     src/pulse_stream.h \
     src/pulse_sink.h \
     src/pulse_object.h \
-    src/pulse_module.h
+    src/pulse_module.h \
+    src/settings.h
 
 unix: PKGCONFIG += libpulse
