@@ -30,7 +30,7 @@ Page {
 
         PageHeader {
             id: mod_title
-            title: "PulseAudio Module"
+            title: "PulseAudio Module #" + pulse_module.index
         }
         Label {
             id: name_label
