@@ -14,7 +14,7 @@
    height="86"
    id="svg2161"
    sodipodi:version="0.32"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="patunnel.svg"
    version="1.1"
    inkscape:export-filename="/home/ich/devel/patunnel/harbour-patunnel.png"
@@ -81,19 +81,10 @@
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient2495"
-       id="linearGradient3926"
-       gradientUnits="userSpaceOnUse"
-       x1="0.30000001"
-       y1="43"
-       x2="85.699997"
-       y2="43" />
-    <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient2535"
        id="linearGradient3928"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(2.1762067,0,0,2.1762067,-452.91054,290.50463)"
+       gradientTransform="matrix(0.09612008,0,0,0.0971472,-31.690767,-4.9920071)"
        x1="532"
        y1="131.40625"
        x2="667.5"
@@ -106,24 +97,24 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="7"
-     inkscape:cx="-13.918916"
-     inkscape:cy="52.927906"
-     inkscape:current-layer="Layer_1"
-     showgrid="true"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="-335.20592"
+     inkscape:cy="-33.143408"
+     inkscape:current-layer="g3912"
+     showgrid="false"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
      inkscape:window-width="1920"
-     inkscape:window-height="1060"
+     inkscape:window-height="1180"
      inkscape:window-x="-4"
      inkscape:window-y="0"
-     inkscape:snap-global="true"
+     inkscape:snap-global="false"
      inkscape:snap-bbox="true"
      inkscape:window-maximized="1"
      inkscape:snap-grids="true"
      inkscape:bbox-nodes="true"
-     inkscape:object-nodes="false"
-     inkscape:snap-smooth-nodes="false"
+     inkscape:object-nodes="true"
+     inkscape:snap-smooth-nodes="true"
      inkscape:object-paths="false"
      inkscape:snap-page="true"
      units="px">
@@ -184,16 +175,16 @@ Rafael Jannone (basic idea)</dc:title>
          inkscape:export-ydpi="258.07468"
          inkscape:export-xdpi="258.07468"
          inkscape:export-filename="/home/ich/devel/patunnel/patunnel.png"
-         style="stroke:#000000;stroke-opacity:1"
-         transform="matrix(0.34722221,0,0,0.34722221,59.119295,3.041824)"
+         style="fill:#000000;fill-opacity:1;stroke:#4580bf;stroke-width:4.35939407;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         transform="matrix(0.33422655,0,0,0.33422655,57.842295,3.6006375)"
          id="g3040">
         <g
-           style="stroke:#000000;stroke-opacity:1;display:none"
+           style="fill:#000000;fill-opacity:1;stroke:#4580bf;stroke-width:4.35939407;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:none"
            id="Layer_2"
            display="none" />
         <g
            transform="translate(-141.26358,-2.6857106e-7)"
-           style="stroke:#000000;stroke-opacity:1"
+           style="fill:#000000;fill-opacity:1;stroke:#4580bf;stroke-width:4.35939407;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
            id="Layer_1">
           <linearGradient
              xlink:href="#linearGradient2495"
@@ -213,7 +204,7 @@ Rafael Jannone (basic idea)</dc:title>
                id="stop3020" />
           </linearGradient>
           <path
-             style="fill:url(#linearGradient3926);fill-opacity:1;stroke:#729fcf;stroke-opacity:0.66798419"
+             style="fill:#000000;fill-opacity:1;stroke:#4580bf;stroke-width:4.35939407;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
              inkscape:connector-curvature="0"
              d="M 84.277,0.3 H 43 C 19.417,0.3 0.3,19.418 0.3,43 v 41.277 c 0,0.786 0.637,1.423 1.423,1.423 H 43 C 66.583,85.7 85.7,66.582 85.7,43 V 1.723 C 85.7,0.937 85.063,0.3 84.277,0.3 z"
              id="path3022" />
@@ -221,40 +212,45 @@ Rafael Jannone (basic idea)</dc:title>
       </g>
       <path
          inkscape:connector-curvature="0"
-         sodipodi:nodetypes="cscccscc"
+         sodipodi:nodetypes="csccccc"
          id="path2375"
-         d="m 1138.7485,717.00547 c -83.6233,89.64267 -176.99052,92.46833 -303.64068,92.46833 -124.68073,0 -233.16479,61.63146 -311.61406,137.24726 l -0.9127,147.34214 c -1.58883,11.8699 13.00994,11.9507 13.00994,11.9507 0,0 196.84842,0.19 295.272,0.5296 306.9868,1.0593 307.2683,-7.7405 307.7505,-306.14915 z"
-         style="fill:url(#linearGradient3928);fill-opacity:1;fill-rule:evenodd;stroke:none"
+         d="m 38.650963,14.097715 c -3.693527,4.001704 -7.817428,4.127843 -13.411392,4.127843 -5.506978,0 -10.338897,2.700804 -13.803894,6.07634 l -0.04033,7.275119 c 0,0 9.529677,0.126016 14.041585,0.140951 13.559186,0.04729 13.186749,-0.576579 13.208047,-13.897724 z"
+         style="fill:url(#linearGradient3928);fill-opacity:1;fill-rule:evenodd;stroke:none;opacity:0"
          inkscape:export-filename="/home/ich/devel/patunnel/patunnel.png"
          inkscape:export-xdpi="258.07468"
-         inkscape:export-ydpi="258.07468"
-         transform="matrix(0.04768401,0,0,0.04768401,-14.618881,-20.142443)" />
+         inkscape:export-ydpi="258.07468" />
       <g
          inkscape:export-ydpi="258.07468"
          inkscape:export-xdpi="258.07468"
          inkscape:export-filename="/home/ich/devel/patunnel/patunnel.png"
          id="g2415"
-         transform="matrix(0.09862747,0,0,0.10201363,-42.582738,-80.906361)">
-        <path
-           transform="matrix(1.676363,0,0,1.676363,688.6772,-480.168)"
-           d="m 22,863.61249 c 0,12.70255 -10.297451,23 -23,23 -12.702549,0 -23,-10.29745 -23,-23 0,-12.70255 10.297451,-23 23,-23 12.702549,0 23,10.29745 23,23 z"
-           sodipodi:ry="23"
-           sodipodi:rx="23"
-           sodipodi:cy="863.61249"
-           sodipodi:cx="-1"
-           id="path2417"
-           style="fill:#729fcf;fill-opacity:1;stroke:none"
-           sodipodi:type="arc" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path2419"
-           d="m 666.92273,892.01313 c -33.41788,8.8724 -58.06252,39.3337 -58.0625,75.53129 0,36.19748 24.64463,66.69008 58.0625,75.56248 -24.10776,-10.8192 -41.4375,-40.5874 -41.4375,-75.56248 -10e-6,-34.97499 17.32973,-64.71209 41.4375,-75.53129 z m 40.15625,0 c 24.10777,10.8192 41.4375,40.5562 41.4375,75.53129 0,34.97508 -17.32974,64.74328 -41.4375,75.56248 33.41788,-8.8724 58.06252,-39.365 58.0625,-75.56248 0,-36.19749 -24.64461,-66.65889 -58.0625,-75.53129 z"
-           style="fill:#729fcf;fill-opacity:1;stroke:none" />
-        <path
-           inkscape:connector-curvature="0"
-           style="fill:#729fcf;fill-opacity:1;stroke:none"
-           d="m 655.64705,849.58672 c -52.18504,13.85506 -90.66987,61.42313 -90.66984,117.9489 0,56.52568 38.48482,104.14268 90.66984,117.99768 -37.64645,-16.8952 -64.7084,-63.3809 -64.7084,-117.99768 -2e-5,-54.61657 27.06194,-101.05374 64.7084,-117.9489 z m 62.70761,0 c 37.64646,16.89516 64.7084,63.33217 64.7084,117.9489 0,54.61678 -27.06195,101.10248 -64.7084,117.99768 52.18504,-13.855 90.66987,-61.472 90.66984,-117.99768 0,-56.52561 -38.48478,-104.09384 -90.66984,-117.9489 z"
-           id="path2421" />
+         transform="matrix(0.0921755,0,0,0.09534016,-38.150235,-74.449374)"
+         style="fill:#4580bf;fill-opacity:1">
+        <g
+           id="g3015"
+           transform="matrix(0.91304326,0,0,0.91304326,59.739354,84.135863)"
+           style="fill:#4580bf;fill-opacity:1">
+          <path
+             sodipodi:type="arc"
+             style="fill:#4580bf;fill-opacity:1;stroke:none"
+             id="path2417"
+             sodipodi:cx="-1"
+             sodipodi:cy="863.61249"
+             sodipodi:rx="23"
+             sodipodi:ry="23"
+             d="m 22,863.61249 c 0,12.70255 -10.297451,23 -23,23 -12.702549,0 -23,-10.29745 -23,-23 0,-12.70255 10.297451,-23 23,-23 12.702549,0 23,10.29745 23,23 z"
+             transform="matrix(1.676363,0,0,1.676363,688.6772,-480.168)" />
+          <path
+             style="fill:#4580bf;fill-opacity:1;stroke:none"
+             d="m 666.92273,892.01313 c -33.41788,8.8724 -58.06252,39.3337 -58.0625,75.53129 0,36.19748 24.64463,66.69008 58.0625,75.56248 -24.10776,-10.8192 -41.4375,-40.5874 -41.4375,-75.56248 -10e-6,-34.97499 17.32973,-64.71209 41.4375,-75.53129 z m 40.15625,0 c 24.10777,10.8192 41.4375,40.5562 41.4375,75.53129 0,34.97508 -17.32974,64.74328 -41.4375,75.56248 33.41788,-8.8724 58.06252,-39.365 58.0625,-75.56248 0,-36.19749 -24.64461,-66.65889 -58.0625,-75.53129 z"
+             id="path2419"
+             inkscape:connector-curvature="0" />
+          <path
+             id="path2421"
+             d="m 655.64705,849.58672 c -52.18504,13.85506 -90.66987,61.42313 -90.66984,117.9489 0,56.52568 38.48482,104.14268 90.66984,117.99768 -37.64645,-16.8952 -64.7084,-63.3809 -64.7084,-117.99768 -2e-5,-54.61657 27.06194,-101.05374 64.7084,-117.9489 z m 62.70761,0 c 37.64646,16.89516 64.7084,63.33217 64.7084,117.9489 0,54.61678 -27.06195,101.10248 -64.7084,117.99768 52.18504,-13.855 90.66987,-61.472 90.66984,-117.99768 0,-56.52561 -38.48478,-104.09384 -90.66984,-117.9489 z"
+             style="fill:#4580bf;fill-opacity:1;stroke:none"
+             inkscape:connector-curvature="0" />
+        </g>
       </g>
     </g>
   </g>
