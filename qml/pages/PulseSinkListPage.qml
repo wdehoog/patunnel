@@ -24,6 +24,14 @@ Page {
 
         PullDownMenu {
             MenuItem {
+                text: "Load any module"
+                onClicked: pageStack.push(Qt.resolvedUrl("PulseLoadModulePage.qml"))
+            }
+            MenuItem {
+                text: "Share local sound server"
+                onClicked: pageStack.push(Qt.resolvedUrl("PulseAddTcpPage.qml"))
+            }
+            MenuItem {
                 text: "Add tunnel sink"
                 onClicked: pageStack.push(Qt.resolvedUrl("PulseAddTunnelPage.qml"))
             }
