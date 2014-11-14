@@ -19,12 +19,16 @@ Page {
 
         PullDownMenu {
             MenuItem {
-                text: "Load module"
+                text: "Load any module"
                 onClicked: pageStack.push(Qt.resolvedUrl("PulseLoadModulePage.qml"))
             }
             MenuItem {
                 text: "Share local sound server"
                 onClicked: pageStack.push(Qt.resolvedUrl("PulseAddTcpPage.qml"))
+            }
+            MenuItem {
+                text: "Add tunnel sink"
+                onClicked: pageStack.push(Qt.resolvedUrl("PulseAddTunnelPage.qml"))
             }
         }
 
@@ -47,7 +51,7 @@ Page {
                 id: argLabel
                 x: Theme.paddingLarge
                 width: parent.width - 2*Theme.paddingLarge
-                text: this_module.arguments
+                text: "#" + index + (this_module.arguments.length > 0 ? ": " + this_module.arguments : "")
                 color: Theme.secondaryColor
                 font.pixelSize: Theme.fontSizeExtraSmall
                 truncationMode: TruncationMode.Fade
@@ -63,7 +67,7 @@ Page {
                     text: "Unload module"
                     x: Theme.paddingLarge
                     width: page.width - 2*Theme.paddingLarge
-                    onClicked: remorse.execute("Unload" + name, function() {
+                    onClicked: remorse.execute("Unloading " + name.replace(/^module-/, ""), function() {
                         PulseInterface.unload_module(this_module)
                     })
                 }
