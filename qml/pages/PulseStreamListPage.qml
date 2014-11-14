@@ -46,7 +46,6 @@ Page {
         }
 
         delegate: ComboBox {
-            x: Theme.paddingLarge
             id: streamComboBox
             label: "#" + index + ": " + name
 
@@ -58,7 +57,6 @@ Page {
                         id: sinkItem
                         text: "#" + index + ": " + name
                         onClicked: move_to_sink(this_sink)
-                        x: Theme.paddingLarge
                         truncationMode: TruncationMode.Fade
                     }
                 }
