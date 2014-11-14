@@ -226,10 +226,12 @@ static void cb_subscribe(pa_context *c, pa_subscription_event_type_t t, uint32_t
                 emit pulse_iface->runtime_error(QString("Error getting info for module #%1").arg(pa_idx));
             pa_operation_unref(operation);
         }
+        break;
     case PA_SUBSCRIPTION_EVENT_SERVER:
         pa_operation *op = pa_context_get_server_info(pulse_iface->context(), cb_server_info, pulse_iface);
         if (!op)
             emit pulse_iface->runtime_error(QString("Error getting server info."));
+        pa_operation_unref(op);
         break;
     }
 }
