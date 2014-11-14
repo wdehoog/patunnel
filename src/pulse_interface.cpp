@@ -11,12 +11,17 @@
 QT_BEGIN_NAMESPACE
 
 
-#define _COMPLETE_PA_OP(_pa_iface_op_func) \
+#define _PA_OP(_pa_iface_op_func) \
     pa_operation *_pa_iface_op = _pa_iface_op_func; \
     while (pa_operation_get_state(_pa_iface_op) == PA_OPERATION_RUNNING) \
         pa_threaded_mainloop_wait(m_mainLoop); \
-    pa_operation_unref(_pa_iface_op); \
+    pa_operation_unref(_pa_iface_op);
+
+#define _PA_LOCKED(code) \
+    pa_threaded_mainloop_lock(m_mainLoop); \
+    code \
     pa_threaded_mainloop_unlock(m_mainLoop);
+
 
 
 static void cb_server_info(pa_context *context, const pa_server_info *info, void *userdata)
@@ -383,14 +388,15 @@ static void cb_subscribe_success(pa_context *c, int success, void *userdata)
 
 void PulseInterface::subscribe()
 {
-    pa_threaded_mainloop_lock(m_mainLoop);
-    pa_context_set_subscribe_callback(m_context, cb_subscribe, this);
-    _COMPLETE_PA_OP(pa_context_subscribe(m_context, (pa_subscription_mask_t) (
-                                             PA_SUBSCRIPTION_MASK_SINK
-                                             | PA_SUBSCRIPTION_MASK_SINK_INPUT
-                                             | PA_SUBSCRIPTION_MASK_SERVER
-                                             | PA_SUBSCRIPTION_MASK_MODULE),
-                                         cb_subscribe_success, this))
+    _PA_LOCKED(
+                pa_context_set_subscribe_callback(m_context, cb_subscribe, this);
+            _PA_OP(pa_context_subscribe(m_context, (pa_subscription_mask_t) (
+                                                     PA_SUBSCRIPTION_MASK_SINK
+                                                     | PA_SUBSCRIPTION_MASK_SINK_INPUT
+                                                     | PA_SUBSCRIPTION_MASK_SERVER
+                                                     | PA_SUBSCRIPTION_MASK_MODULE),
+                                                 cb_subscribe_success, this))
+            )
 }
 
 
@@ -407,34 +413,32 @@ static void cb_set_default_sink_success(pa_context *c, int success, void *userda
 
 void PulseInterface::set_default_sink(PulseSink *sink) {
     QByteArray sink_name(sink->name().toUtf8());
-    pa_threaded_mainloop_lock(m_mainLoop);
-    _COMPLETE_PA_OP(pa_context_set_default_sink(m_context, sink_name.data(),
-                                                cb_set_default_sink_success, this));
+    _PA_LOCKED(
+                _PA_OP(pa_context_set_default_sink(
+                                    m_context, sink_name.data(),
+                                    cb_set_default_sink_success, this));
+            )
 }
 
 
 void PulseInterface::get_server_info()
 {
-    pa_threaded_mainloop_lock(m_mainLoop);
-    _COMPLETE_PA_OP(pa_context_get_server_info(m_context, cb_server_info, this));
+    _PA_LOCKED(_PA_OP(pa_context_get_server_info(m_context, cb_server_info, this)));
 }
 
 void PulseInterface::get_sinks()
 {
-    pa_threaded_mainloop_lock(m_mainLoop);
-    _COMPLETE_PA_OP(pa_context_get_sink_info_list(m_context, cb_sink_info, this));
+    _PA_LOCKED(_PA_OP(pa_context_get_sink_info_list(m_context, cb_sink_info, this)));
 }
 
 void PulseInterface::get_streams()
 {
-    pa_threaded_mainloop_lock(m_mainLoop);
-    _COMPLETE_PA_OP(pa_context_get_sink_input_info_list(m_context, cb_stream_info, this));
+    _PA_LOCKED(_PA_OP(pa_context_get_sink_input_info_list(m_context, cb_stream_info, this)));
 }
 
 void PulseInterface::get_modules()
 {
-    pa_threaded_mainloop_lock(m_mainLoop);
-    _COMPLETE_PA_OP(pa_context_get_module_info_list(m_context, cb_module_info, this));
+    _PA_LOCKED(_PA_OP(pa_context_get_module_info_list(m_context, cb_module_info, this)));
 }
 
 
@@ -452,8 +456,7 @@ void PulseInterface::load_module(QString name, QString args)
    QByteArray args_bytes = args.toUtf8();
    QByteArray name_bytes = name.toUtf8();
 
-   pa_threaded_mainloop_lock(m_mainLoop);
-   _COMPLETE_PA_OP(pa_context_load_module(m_context, name_bytes.data(), args_bytes.data(), cb_load_module, this));
+   _PA_LOCKED(_PA_OP(pa_context_load_module(m_context, name_bytes.data(), args_bytes.data(), cb_load_module, this)));
 }
 
 
@@ -469,9 +472,8 @@ static void cb_move_stream_success(pa_context *c, int success, void *userdata)
 
 void PulseInterface::move_stream(PulseStream const &stream, PulseSink const *sink)
 {
-    pa_threaded_mainloop_lock(m_mainLoop);
-    _COMPLETE_PA_OP(pa_context_move_sink_input_by_index(
-                        m_context, stream.index(), sink->index(), cb_move_stream_success, this));
+    _PA_LOCKED(_PA_OP(pa_context_move_sink_input_by_index(
+                        m_context, stream.index(), sink->index(), cb_move_stream_success, this)));
 }
 
 
@@ -487,18 +489,23 @@ static void cb_unload_module(pa_context *c, int success, void *userdata) {
 }
 
 
-void PulseInterface::unload_module(PulseModule *module)
+void PulseInterface::unload_module(QObject *module)
 {
-    pa_threaded_mainloop_lock(m_mainLoop);
-    _COMPLETE_PA_OP(pa_context_unload_module(m_context, module->index(), cb_unload_module, this));
+    PulseModule const *m = qobject_cast<PulseModule const *>(module);
+    _PA_LOCKED(_PA_OP(pa_context_unload_module(m_context, m->index(), cb_unload_module, this)));
+}
+
+
+void PulseInterface::unload_module(int module_idx)
+{
+    _PA_LOCKED(_PA_OP(pa_context_unload_module(m_context, module_idx, cb_unload_module, this)));
 }
 
 
 void PulseInterface::unload_sink(QObject *o)
 {
     PulseSink const *sink = qobject_cast<PulseSink const *>(o);
-    pa_threaded_mainloop_lock(m_mainLoop);
-    _COMPLETE_PA_OP(pa_context_unload_module(m_context, sink->module_index(), cb_unload_module, this));
+    _PA_LOCKED(_PA_OP(pa_context_unload_module(m_context, sink->module_index(), cb_unload_module, this)));
 }
 
 

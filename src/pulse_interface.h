@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QPULSEAUDIOENGINE_H
-#define QPULSEAUDIOENGINE_H
+#ifndef PULSE_INTERFACE_H
+#define PULSE_INTERFACE_H
 
 #include <QtCore/qbytearray.h>
 #include <QQmlEngine>
@@ -152,7 +152,10 @@ public:
     void load_module(QString name, QString args);
 
     Q_INVOKABLE
-    void unload_module(PulseModule *module);
+    void unload_module(QObject *module);
+
+    Q_INVOKABLE
+    void unload_module(int module_idx);
 
     Q_INVOKABLE
     void unload_sink(QObject *sink);
@@ -181,50 +184,16 @@ private:
 
     static PulseInterface *m_instance;
 
-    static PulseSink *sinks_prop_at(QQmlListProperty<PulseSink> *list_prop, int index) {
-        PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object);
-        if (iface) {
-            QMutexLocker l(&(iface->m_data_mutex));
-            return new PulseSink(iface->m_sinks.at(index));
-        }
-        return NULL;
-    }
-
-    static PulseStream *streams_prop_at(QQmlListProperty<PulseStream> *list_prop, int index) {
-        PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object);
-        if (iface) {
-            QMutexLocker l(&(iface->m_data_mutex));
-            return new PulseStream(iface->m_streams.at(index));
-        }
-        return NULL;
-    }
-
+    QQML_LIST_PROPERTY_AT(sinks_prop_at, PulseSink, m_sinks)
+    QQML_LIST_PROPERTY_AT(streams_prop_at, PulseStream, m_streams)
     QQML_LIST_PROPERTY_AT(modules_prop_at, PulseModule, m_modules)
 
-    static int sinks_prop_count(QQmlListProperty<PulseSink> *list_prop) {
-        PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object);
-        if (iface) {
-            QMutexLocker l(&(iface->m_data_mutex));
-            return iface->m_sinks.count();
-        }
-        return -1;
-    }
-
-    static int streams_prop_count(QQmlListProperty<PulseStream> *list_prop) {
-        PulseInterface *iface = qobject_cast<PulseInterface *>(list_prop->object);
-        if (iface) {
-            QMutexLocker l(&(iface->m_data_mutex));
-            return iface->m_streams.count();
-        }
-        return -1;
-    }
-
+    QQML_LIST_PROPERTY_COUNT(streams_prop_count, PulseStream, m_streams)
+    QQML_LIST_PROPERTY_COUNT(sinks_prop_count, PulseSink, m_sinks)
     QQML_LIST_PROPERTY_COUNT(modules_prop_count, PulseModule, m_modules)
-
-
 };
 
 
 QT_END_NAMESPACE
 
-#endif
+#endif /*PULSE_INTERFACE_H*/
