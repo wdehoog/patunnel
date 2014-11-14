@@ -377,6 +377,17 @@ PulseSink *PulseInterface::default_sink() {
 }
 
 
+QList<int> PulseInterface::find_modules(QString module_name)
+{
+    QList<int> rv;
+    for (QList<PulseModule>::const_iterator it = m_modules.cbegin(); it != m_modules.cend(); ++it) {
+        if (it->name() == module_name)
+            rv.append(it->index());
+    }
+    return rv;
+}
+
+
 static void cb_subscribe_success(pa_context *c, int success, void *userdata)
 {
     Q_UNUSED(c);

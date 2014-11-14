@@ -163,6 +163,9 @@ public:
     Q_INVOKABLE
     bool defer_stream_list_updates(bool b);
 
+    Q_INVOKABLE
+    QList<int> find_modules(QString module_name);
+
     static PulseInterface *instance();
 
 public slots:
