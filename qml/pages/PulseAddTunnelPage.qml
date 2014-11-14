@@ -3,6 +3,7 @@ import Sailfish.Silica 1.0
 import harbour.patunnel.Interface 1.0
 
 Dialog {
+    id: dialog
     canAccept: { ipField.text.length > 0
                  && sinkField.text.length > 0 }
     onAccepted: PulseInterface.load_module("module-tunnel-sink",
@@ -25,7 +26,10 @@ Dialog {
                 ipField.focus = false;
                 sinkField.focus = true;
             }
-            validator: RegExpValidator { regExp: /^\w+$/ }
+            EnterKey.enabled: text.length > 0
+            EnterKey.iconSource: "image://theme/icon-m-enter-next"
+            inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
+            validator: RegExpValidator { regExp: /^[\w.-]+$/ }
         }
 
         TextField {
@@ -34,6 +38,10 @@ Dialog {
             anchors { left: parent.left; right: parent.right }
             label: "Sink name or index"
             placeholderText: label
+            EnterKey.iconSource: "image://theme/icon-m-enter-accept"
+            EnterKey.enabled: text.length > 0
+            EnterKey.onClicked: dialog.accept()
+            inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
             validator: RegExpValidator { regExp: /^.+/ }
         }
     }
