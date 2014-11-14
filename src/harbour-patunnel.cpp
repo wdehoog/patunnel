@@ -41,6 +41,7 @@
 #include <QtQml>
 
 #include "pulse_interface.h"
+#include "settings.h"
 
 
 static QObject *get_PulseInterface_instance(QQmlEngine *engine, QJSEngine *scriptEngine)
@@ -48,6 +49,12 @@ static QObject *get_PulseInterface_instance(QQmlEngine *engine, QJSEngine *scrip
     Q_UNUSED(engine);
     Q_UNUSED(scriptEngine);
     return PulseInterface::instance();
+}
+
+static QObject *get_Settings_instance(QQmlEngine *engine, QJSEngine *scriptEngine) {
+    Q_UNUSED(engine);
+    Q_UNUSED(scriptEngine);
+    return Settings::instance();
 }
 
 
@@ -59,6 +66,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<PulseSink>("harbour.patunnel.Sink", 1, 0, "PulseSink");
     qmlRegisterType<PulseStream>("harbour.patunnel.Stream", 1, 0, "PulseStream");
     qmlRegisterType<PulseModule>("harbour.patunnel.Module", 1, 0, "PulseModule");
+    qmlRegisterSingletonType<Settings>("harbour.patunnel.Settings", 1, 0, "Settings", &get_Settings_instance);
     qmlRegisterSingletonType<PulseInterface>("harbour.patunnel.Interface", 1, 0, "PulseInterface", &get_PulseInterface_instance);
 
     view->setSource(SailfishApp::pathTo("qml/harbour-patunnel.qml"));
