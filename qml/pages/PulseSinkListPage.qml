@@ -75,10 +75,14 @@ Page {
                             }
                             else {
                                 if (Settings.policymodule_autounload == Settings.AUTOUNLOAD_ALWAYS) {
-                                    console.warn("Automaticall unloading module-policy-enforcement.")
-                                    PulseInterface.unload_module("module-policy-enforcement")
+                                    console.warn("Automatically unloading module-policy-enforcement.")
+                                    remorse.execute("Unloading module-policy-enforcement", function() {
+                                        for (var i=0, mod_idx; (mod_idx = indices[i++]);)
+                                            PulseInterface.unload_module(mod_idx)
+                                        PulseInterface.default_sink = this_sink
+                                    })
                                 }
-                                if (Settings.policymodule_autounload == Settings.AUTOUNLOAD_NEVER) {
+                                else if (Settings.policymodule_autounload == Settings.AUTOUNLOAD_NEVER) {
                                     console.warn("module-policy-enforcement NOT unloaded, setting default sink will have no effect.")
                                     PulseInterface.default_sink = this_sink
                                 }
@@ -134,11 +138,13 @@ Page {
                         console.warn("Strange, " + indices.length + " modules with the name module-policy-enforcement are loaded."
                                      + " There should be at most one. Proceed with caution.")
                     }
-                    for (var i=0, module_idx; module_idx = indices[i++];) {
-                        PulseInterface.unload_module(module_idx)
-                    }
-                    PulseInterface.default_sink = autounload_question.chosen_sink
-                    autounload_question.hide()
+                    remorse.execute("Unloading module-policy-enforcement", function() {
+                        for (var i=0, module_idx; module_idx = indices[i++];) {
+                            PulseInterface.unload_module(module_idx)
+                        }
+                        PulseInterface.default_sink = autounload_question.chosen_sink
+                        autounload_question.hide()
+                    })
                 }
             }
             Button {
