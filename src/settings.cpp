@@ -7,14 +7,17 @@ Settings::Settings(QObject *parent)
 
 Settings::AutoUnloadSetting Settings::policymodule_autounload()
 {
-    QVariant v = QSettings::value("autounload_policymodule", AUTOUNLOAD_ASK);
-    return v.value<AutoUnloadSetting>();
+
+    AutoUnloadSetting rv = static_cast<AutoUnloadSetting>(
+                QSettings::value("autounload_policymodule", AUTOUNLOAD_ASK).toInt());
+    return rv;
 }
 
 
 void Settings::set_policymodule_autounload(AutoUnloadSetting autounload)
 {
     QSettings::setValue("autounload_policymodule", autounload);
+    emit policymodule_autounload_changed();
 }
 
 Settings *Settings::m_instance;

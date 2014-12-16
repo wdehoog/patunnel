@@ -19,10 +19,11 @@ public:
     explicit Settings(QObject *parent = 0);
 
     enum AutoUnloadSetting {
-        AUTOUNLOAD_ASK,
+        AUTOUNLOAD_ASK = 0,
         AUTOUNLOAD_ALWAYS,
         AUTOUNLOAD_NEVER
     };
+    Q_ENUMS(AutoUnloadSetting)
 
     static Settings *instance();
 
