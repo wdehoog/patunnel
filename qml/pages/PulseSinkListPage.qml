@@ -22,6 +22,7 @@ Page {
             title: "PulseAudio Sinks"
         }
 
+
         PullDownMenu {
             MenuItem {
                 text: "Load any module"
@@ -41,6 +42,7 @@ Page {
             id: sinkItem
             ListView.onRemove: animateRemoval(listItem)
             enabled: index != PulseInterface.default_sink.index
+            onClicked: autounload_question.hide()
 
             Column {
                 Label {
