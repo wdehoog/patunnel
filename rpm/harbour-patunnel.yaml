@@ -16,9 +16,11 @@ PkgConfigBR:
 - Qt5Core
 - Qt5Qml
 - Qt5Quick
+PkgBR:
+- pulseaudio-devel
 Requires:
 - sailfishsilica-qt5 >= 0.10.9
-- libpulse-simple.so.0(PULSE_0)
+- pulseaudio
 Files:
 - '%defattr(644,root,root,755)'
 - '%attr(755,root,root) %{_bindir}/%{name}'
