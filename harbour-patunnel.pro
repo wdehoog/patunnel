@@ -47,4 +47,5 @@ HEADERS += \
     src/pulse_module.h \
     src/settings.h
 
-unix: PKGCONFIG += libpulse
+QMAKE_LFLAGS += -lpulse
+#unix: PKGCONFIG += libpulse

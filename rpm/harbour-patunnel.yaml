@@ -16,9 +16,14 @@ PkgConfigBR:
 - Qt5Core
 - Qt5Qml
 - Qt5Quick
+
+PkgBR:
+  - pulseaudio-devel
+
 Requires:
-- sailfishsilica-qt5 >= 0.10.9
-- libpulse-simple.so.0(PULSE_0)
+  - sailfishsilica-qt5 >= 0.10.9
+  - pulseaudio
+
 Files:
 - '%defattr(644,root,root,755)'
 - '%attr(755,root,root) %{_bindir}/%{name}'
@@ -33,4 +38,4 @@ Files:
 - '%{_datadir}/%{name}/qml/harbour-patunnel.qml'
 - '%{_datadir}/icons/hicolor/86x86/apps/%{name}.png'
 - '%{_datadir}/applications/%{name}.desktop'
-PkgBR: []
+

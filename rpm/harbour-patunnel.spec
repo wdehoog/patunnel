@@ -22,11 +22,12 @@ URL:        https://github.com/vmatare/patunnel
 Source0:    %{name}-%{version}.tar.bz2
 Source100:  harbour-patunnel.yaml
 Requires:   sailfishsilica-qt5 >= 0.10.9
-Requires:   libpulse-simple.so.0(PULSE_0)
+Requires:   pulseaudio
 BuildRequires:  pkgconfig(sailfishapp) >= 0.0.10
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(Qt5Quick)
+BuildRequires:  pulseaudio-devel
 BuildRequires:  desktop-file-utils
 
 %description
