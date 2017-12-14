@@ -147,6 +147,7 @@ public:
     void subscribe();
 
     void move_stream(PulseStream const &stream, PulseSink const *sink);
+    void unmute_stream(PulseStream const &stream);
 
     Q_INVOKABLE
     void load_module(QString name, QString args);

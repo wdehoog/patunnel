@@ -489,6 +489,20 @@ void PulseInterface::move_stream(PulseStream const &stream, PulseSink const *sin
                         m_context, stream.index(), sink->index(), cb_move_stream_success, this)));
 }
 
+static void cb_unmute_stream_success(pa_context *c, int success, void *userdata)
+{
+    Q_UNUSED(c);
+    PulseInterface *pulse_iface = reinterpret_cast<PulseInterface*>(userdata);
+    if (!success)
+        emit pulse_iface->runtime_error("Failed to unmute stream.");
+    pa_threaded_mainloop_signal(pulse_iface->mainloop(), 0);
+}
+
+void PulseInterface::unmute_stream(PulseStream const &stream)
+{
+    _PA_LOCKED(_PA_OP(pa_context_set_sink_input_mute(
+                        m_context, stream.index(), 0, cb_unmute_stream_success, this)));
+}
 
 static void cb_unload_module(pa_context *c, int success, void *userdata) {
     Q_UNUSED(c);

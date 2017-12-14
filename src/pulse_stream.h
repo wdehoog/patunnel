@@ -33,6 +33,9 @@ public:
     Q_INVOKABLE
     void move_to_sink(QObject *sink) const;
 
+    Q_INVOKABLE
+    void unmute() const;
+
 private:
     unsigned int m_sink_index;
     void this_changed();

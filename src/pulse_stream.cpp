@@ -27,6 +27,12 @@ void PulseStream::move_to_sink(QObject *sink) const
     iface->move_stream(*this, qobject_cast<PulseSink *>(sink));
 }
 
+void PulseStream::unmute() const
+{
+    PulseInterface *iface = qobject_cast<PulseInterface *>(PulseInterface::instance());
+    iface->unmute_stream(*this);
+}
+
 PulseSink *PulseStream::sink() const
 {
     PulseInterface *iface = qobject_cast<PulseInterface *>(PulseInterface::instance());

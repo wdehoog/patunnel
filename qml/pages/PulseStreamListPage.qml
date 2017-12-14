@@ -50,6 +50,11 @@ Page {
             label: "#" + index + ": " + name
 
             menu: ContextMenu {
+                MenuItem {
+                    text: "Unmute #" + index + ": " + name
+                    onClicked: unmute()
+                    truncationMode: TruncationMode.Fade
+                }
                 Repeater {
                     model: PulseInterface.sink_list
 
